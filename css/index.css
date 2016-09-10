@@ -1,0 +1,32 @@
+#wrap {
+width:960px;
+margin:0px auto;
+}
+
+header {
+  border:solid 1px;
+}
+
+#sidenavi {
+float:left;
+width:150px;
+height:498px;
+border:solid 1px;
+margin:10px 10px 10px 0px;
+}
+
+#contents {
+width:800px;
+height:498px;
+border:solid 1px;
+margin:10px 0px 0px 0px;
+}
+
+footer {
+clear:both;
+border:solid 1px;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+display: block;
+}
