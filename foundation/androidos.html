@@ -1,35 +1,40 @@
-<h1 id="1-android-os-">1. Android OS について</h1>
-<h2 id="android-">Androidの歴史</h2>
-<table>
- <thead>
-  <tr>
-    <th style="text-align:center">歴史</th>
-    <th style="text-align:left">説明</th>
-  </tr>
- </thead>
-<tbody>
-   <tr>
-    <td style="text-align:center">2003年</td>
-    <td style="text-align:left">アンディ・ルービン、リッチ ・マイナー、ニック・シアーズ、クリス・ホワイトが携帯電話向けソフトウェアプラットフォームを開発しAndroid社を設立。</td>
-   </tr>
-   <tr>
-  <td style="text-align:center">2005年</td>
-  <td style="text-align:left">GoogleがAndroid社を買収し、一時はGoogleが「 gPhone」という独自の携帯電話端末の開発を進めているという憶測が流れた</td>
-  </tr>
-</tbody>
-</table>
-<h2 id="android-os-">Android OSのアーキテクチャ</h2>
-<p>Androidはオープンソースです。<br>Androidアーキテクチャは、下記のような構成となっています。</p>
-<p><img src="C:\Users\hirao\Desktop\doc\projects\AndroidTraining\AndroidTraining\foundation\img\platformarchitecture.png" alt="Android"></p>
-<h3 id="1-linux-kernel">1.LINUX KERNEL</h3>
-<p>Androidのアーキテクチャは、Linux2.6カーネルをベースにしています。<br>Androidランタイム（ART）は、スレッドやメモリ管理などの基本となる機能がLinuxカーネルに依存しています。<br>Linuxカーネルを使用すると、主要なセキュリティ機能とデバイスメーカーといったカーネル用のハードウェアドライバを開発することができます。</p>
-<h3 id="2-hardware-abstraction-layer-hal-">2.Hardware Abstraction Layer (HAL)</h3>
-<p>ハードウェアアブストラクションレイヤ（HAL）は、より高いデバイスハードウェア機能を提供する標準インタフェースのJava API フレームワークです。</p>
-<h3 id="3-android-runtime">3.Android Runtime</h3>
-<p>JavaソースをDEXバイトコードへコンパイルする役割を持つ。<br>Androidのために特別に設計されたバイトコード形式を実行することにより、メモリが少ないデバイスでの複数の仮想マシンを実行できるように書かれています。<br>Android 5以降はDalvikはARTに置き換えられました。</p>
-<p>ARTの主な機能は以下のものが挙げられます。</p>
-<p>実行時（JIT）コンパイル<br>最適化されたガベージコレクション（GC）<br>専用のサンプリングプロファイラ、詳細な診断例外とクラッシュ報告、および特定のフィールドを監視するようにウォッチポイントを設定する機能などより優れたデバッグサポート。</p>
-<p>これらの機能により実行速度や開発効率の改善を実現しています。<br>ただしAOTコンパイルについては、アプリのインストールやアップデートを一度に大量に行う場合、コンパイル時間が長くなってしまうことが問題視され、Android Nでは初回起動時にコンパイルするようになる予定です。</p>
-<h3 id="4-native-c-c-libraries">4.Native C/C++ Libraries</h3>
-<h3 id="5-java-api-framework">5.Java API Framework</h3>
-<h3 id="6-system-apps">6.System Apps</h3>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Android OSについて</title>
+  </head>
+  <body>
+    <h1 id="1-android-os-">1. Android OS について</h1>
+    <h2 id="android-">Androidの歴史</h2>
+    <table border="1" width="500" cellspacing="0" cellpadding="5" bordercolor="#333333">
+    <tr>
+    <th>歴史</font></th>
+    <th>説明</font></th>
+    </tr>
+    <tr>
+    <td align="center">2003年</td>
+    <td>アンディ・ルービン、リッチ ・マイナー、ニック・シアーズ、クリス・ホワイトが携帯電話向けソフトウェアプラットフォームを開発しAndroid社を設立。</td>
+    </tr>
+    <tr>
+    <td align="center" nowrap>2005年</td>
+    <td>GoogleがAndroid社を買収し、一時はGoogleが「 gPhone」という独自の携帯電話端末の開発を進めているという憶測が流れた</td>
+    </tr>
+    </table>
+    <h2 id="android-os-">Android OSのアーキテクチャ</h2>
+    <p>Androidはオープンソースです。<br>Androidアーキテクチャは、下記のような構成となっています。</p>
+    <p><img src="C:\Users\hirao\Desktop\doc\projects\AndroidTraining\AndroidTraining\img\platformarchitecture.png" alt="Android"></p>
+    <h3 id="1-linux-kernel">1.LINUX KERNEL</h3>
+    <p>Androidのアーキテクチャは、Linux2.6カーネルをベースにしています。<br>Androidランタイム（ART）は、スレッドやメモリ管理などの基本となる機能がLinuxカーネルに依存しています。<br>Linuxカーネルを使用すると、主要なセキュリティ機能とデバイスメーカーといったカーネル用のハードウェアドライバを開発することができます。</p>
+    <h3 id="2-hardware-abstraction-layer-hal-">2.Hardware Abstraction Layer (HAL)</h3>
+    <p>ハードウェアアブストラクションレイヤ（HAL）は、より高いデバイスハードウェア機能を提供する標準インタフェースのJava API フレームワークです。</p>
+    <h3 id="3-android-runtime">3.Android Runtime</h3>
+    <p>JavaソースをDEXバイトコードへコンパイルする役割を持つ。<br>Androidのために特別に設計されたバイトコード形式を実行することにより、メモリが少ないデバイスでの複数の仮想マシンを実行できるように書かれています。<br>Android 5以降はDalvikはARTに置き換えられました。</p>
+    <p>ARTの主な機能は以下のものが挙げられます。</p>
+    <p>実行時（JIT）コンパイル<br>最適化されたガベージコレクション（GC）<br>専用のサンプリングプロファイラ、詳細な診断例外とクラッシュ報告、および特定のフィールドを監視するようにウォッチポイントを設定する機能などより優れたデバッグサポート。</p>
+    <p>これらの機能により実行速度や開発効率の改善を実現しています。<br>ただしAOTコンパイルについては、アプリのインストールやアップデートを一度に大量に行う場合、コンパイル時間が長くなってしまうことが問題視され、Android Nでは初回起動時にコンパイルするようになる予定です。</p>
+    <h3 id="4-native-c-c-libraries">4.Native C/C++ Libraries</h3>
+    <h3 id="5-java-api-framework">5.Java API Framework</h3>
+    <h3 id="6-system-apps">6.System Apps</h3>
+  </body>
+</html>
