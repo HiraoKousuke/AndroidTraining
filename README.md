@@ -11,7 +11,7 @@
 
 下記のカリキュラムで学習を進めて行きます。
 
-1. Android OS
+1. Android OS(https://power-h.github.io/AndroidTraining/)
 2. Android Studio
 3. アプリケーションコンポーネント
 4. UI
