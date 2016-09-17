@@ -269,5 +269,43 @@
 	<ul>
 		<li>「Hist #n」の「n」はタスク関係なく全アクティビティの通し番号っぽい</li>
 	</ul>
+	<h1 id="-">プロセス・タスク・スタック</h1>
+	<h2 id="-">プロセスとは？</h2>
+	<ul>
+		<li>「プロセス」とはアプリを実行している Linux プロセスのこと。 Android は JVM 上で動くのでこのプロセスは要は Java プロセスということになる。</li>
+		<li>特にアプリで設定しない限りアプリのプロセスは1つ。</li>
+	</ul>
+	<h2 id="-">タスクとは？</h2>
+	<ul>
+		<li>
+			<p>複数のアクティビティをまとめるもので、タスクはスタックを1つもっていてそこにアクティビティを積んでまとめる。 ※イメージ的には次のようなものを想像すればなんとなく分かりやすいかも。
+			</p>
+			<pre class="editor-colors lang-java"><div class="line"><span class="source java"><span class="meta class java"><span>&nbsp;&nbsp;</span><span class="meta class identifier java"><span class="storage modifier java"><span>class</span></span><span>&nbsp;</span><span class="entity name type class java"><span>Task</span></span></span><span>&nbsp;</span><span class="punctuation section class begin bracket curly java"><span>{</span></span></span></span></div><div class="line"><span class="source java"><span class="meta class java"><span class="meta class body java"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta definition variable java"><span class="storage type java"><span>String</span></span><span>&nbsp;</span><span class="variable definition java"><span>taskName</span></span></span><span class="punctuation terminator java"><span>;</span></span></span></span></span></div><div class="line"><span class="source java"><span class="meta class java"><span class="meta class body java"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="storage type java"><span>List</span></span><span class="punctuation bracket angle java"><span>&lt;</span></span><span class="storage type generic java"><span>Activity</span></span><span class="punctuation bracket angle java"><span>&gt;</span></span><span>&nbsp;stack</span><span class="punctuation terminator java"><span>;</span></span></span></span></span></div><div class="line"><span class="source java"><span class="meta class java"><span class="meta class body java"><span>&nbsp;&nbsp;</span></span><span class="punctuation section class end bracket curly java"><span>}</span></span></span></span></div></pre>
+		</li>
+		<li>
+			<p>タスクは Android システム内に複数個存在し、フォアグラウンド・バックグラウンドに移動します。ユーザーにはフォアグラウンドタスクが見える事になります。</p>
+		</li>
+	</ul>
+	<p>例)<br> [タスク1] [タスク2] [タスク3] ｜ ｜タスク2のアプリがランチャーから選択 ↓ [タスク1] [タスク3] [タスク2]</p>
+	<ul>
+		<li>ユーザーが一定期間タスクから離れる(バックグラウンドにする)と Android システムはタスクをクリアします。 そのクリアされたタスクをユーザーがフォアグラウンドに戻そうとするとタスクのルートアクティビティが起動します。
+		</li>
+	</ul>
+	<h2 id="-">スタックとは？</h2>
+	<ul>
+		<li>「スタック」「バックスタック」「アクティビティスタック)」などと言う。</li>
+		<li>
+			<p>Android ではアクティビティを起動するとアクティビティが切り替わるのではなくスタック状に積まれていき、ユーザーには一番上に積まれたアクティビティが見える仕組みになっている。このアクティビティを積むスタックのことを「バックスタック、アクティビティスタック」と呼ぶ。 例) A から B を起動した場合</p>
+			<p> | | | | | | ---→ | B | | A | | A | +-------+ +-------+</p>
+		</li>
+		<li>
+			<p>アクティビティを finish() したりバックキーで閉じるとそのアクティビティはスタックから削除される。</p>
+		</li>
+		<li>スタックの一番下にいるアクティビティを「ルートアクティビティ」と呼ぶ。</li>
+		<li>ルートアクティビティがスタックから無くなるとスタック自体が無くなる。正確にはスタックを持っているタスクが消えます。</li>
+		<li>スタックに積むアクティビティはプロセスが異なるアクティビティも積む事ができます。 例) アプリから外部ブラウザ(Chromeアプリ)を起動</li>
+	</ul>
+	<p>B (Chromeアプリプロセス) A (自身のアプリプロセス)</p>
 </body>
+
 </html>
