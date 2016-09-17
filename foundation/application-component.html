@@ -2,31 +2,41 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>アクティビティとは</title>
+		<title></title>
 	</head>
 	<body>
-		・UI を持ち1つの画面を現すコンポーネント。
-		・フォアグラウンドで実行状態、バックグラウンドで停止状態のように、見える(触れる)状態によるライフサイクルを持つ。
-		■　アクティビティの構成要素
-		━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-		・アクティビティ自体は Java のクラスで、そこに UI部品（これも Java クラス）を追加することで画面が作られている。
-		・アクティビティを構成する UI 部品としては大きく2種類がある。
-		 『ビュー』
-			 -- テキスト、ボタン、画像などの UI として形状を持つ部品
-		 『レイアウト』
-			 --  UI としての形状を持たずビューをグループ化し表示位置を制御する部品
-		 ※イメージとして Activity 内にビュー、レイアウトのインスタンスが階層構造で追加されている感じ。XML の DOM と同じと考えても良い。
-		 Activity
-			 Layout
-				 View1
-				 View2
-			 Layout
-				 View3
-		・アクティビティに UI 部品を追加する方法は2つある。
-		 [1] UI 部品の配置を記述したXMLファイル(レイアウトファイル)で追加する方法。
-		 [2] UI 部品の Java クラスのインスタンスを生成し追加する方法。
-
-		 ※両方とも例は後述
+		<h1 id="-">アクティビティとは？</h1>
+		<h2 id="1-">1. アクティビティとは？</h2>
+		<ul>
+		<li>UI を持ち1つの画面を現すコンポーネント。  </li>
+		<li>フォアグラウンドで実行状態、バックグラウンドで停止状態のように、見える(触れる)状態によるライフサイクルを持つ。</li>
+		</ul>
+		<h2 id="2-">2. アクティビティの構成要素</h2>
+		<ul>
+		<li>アクティビティ自体は Java のクラスで、そこに UI部品（これも Java クラス）を追加することで画面が作られている。  </li>
+		<li><p>アクティビティを構成する UI 部品としては大きく2種類がある。</p>
+		<ul>
+		<li><p>『ビュー』</p>
+		<ul>
+		<li>テキスト、ボタン、画像などの UI として形状を持つ部品</li>
+		</ul>
+		</li>
+		<li><p>『レイアウト』</p>
+		<ul>
+		<li>UI としての形状を持たずビューをグループ化し表示位置を制御する部品</li>
+		</ul>
+		</li>
+		</ul>
+		</li>
+		</ul>
+		<p>※イメージとして Activity 内にビュー、レイアウトのインスタンスが階層構造で追加されている感じ。XML の DOM と同じと考えても良い。  </p>
+		<pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Activity</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>Layout</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>View1</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View2</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>Layout</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>View3</span></span></span></div></pre><ul>
+		<li>アクティビティに UI 部品を追加する方法は2つある。<ol>
+		<li>UI 部品の配置を記述したXMLファイル(レイアウトファイル)で追加する方法。</li>
+		<li>UI 部品の Java クラスのインスタンスを生成し追加する方法。</li>
+		</ol>
+		</li>
+		</ul>
+		<p>※両方とも例は後述</p>
 	</body>
 </html>
-#
