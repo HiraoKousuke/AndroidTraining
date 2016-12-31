@@ -7,22 +7,20 @@
 </head>
 
 <body>
-    <h1 id="-">インテント</h1>
-    <h2 id="-">インテントとは？</h2>
-    <ul>
-        <li>「Intent」を辞書で引くと「意図、目的」</li>
-        <li>Android は「何をしたいか」をシステムに渡すと、その希望にマッチする機能(アプリケーションコンポーネント)を探して自動で呼び出してくれる仕組みがある。この「何をしたいか」のメッセージを「Intent(インテント)」と言う。</li>
-        <li>インテントから呼び出される対象となるのは「アクティビティ」「サービス」「ブロードキャストレシーバ」の３つ。コンテンツプロバイダは含まれない。</li>
-        <li>インテントにマッチする機能(アプリケーションコンポーネント)が複数あった場合、どちらを呼び出すかを選択するダイアログ「App Chooser(アプリチューザ)」が表示されユーザーが選択することができる。 ※このアプリチューザは対象がアクティビティ以外でも出る？
-        </li>
-        <li>インテントには下記 2 つの情報を設定することができる。
-            <ol>
-                <li>呼び出し対象を絞り込む条件 (必須)</li>
-                <li>呼び出し対象に送るデータ</li>
-            </ol>
-        </li>
-    </ul>
-    <h2 id="-">インテントに設定できる情報</h2>
+    <h1>インテント</h1>
+    <h2>1. インテントとは？</h2>
+    <pre>
+   「Intent」を辞書で引くと「意図、目的」
+    Android は「何をしたいか」をシステムに渡すと、その希望にマッチする機能(アプリケーションコンポーネント)を探して自動で呼び出してくれる仕組みがある。
+    この「何をしたいか」のメッセージを「Intent(インテント)」と言う。
+    インテントから呼び出される対象となるのは「アクティビティ」「サービス」「ブロードキャストレシーバ」の３つ
+    コンテンツプロバイダは含まれない。
+    インテントにマッチする機能(アプリケーションコンポーネント)が複数あった場合、どちらを呼び出すかを選択するダイアログ「App Chooser(アプリチューザ)」が表示されユーザーが選択することができる。
+    ※このアプリチューザは対象がアクティビティ以外でも出る？
+    インテントには下記 2 つの情報を設定することができる。
+    呼び出し対象を絞り込む条件 (必須) 呼び出し対象に送るデータ
+  </pre>
+    <h2>2. インテントに設定できる情報</h2>
     <ul>
         <li>
             <p>呼び出し対象を絞り込む条件</p>
@@ -30,62 +28,81 @@
         <li>
             <p>コンポーネント名</p>
         </li>
+        <li>
+            <p>データ</p>
+        </li>
     </ul>
-    <hr>
-    <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>呼び出し対象となるアプリケーションコンポーネントのクラス名。</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>例)</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>intent.setComponent(new&nbsp;Component(&quot;samples.foo&quot;,&nbsp;&quot;samples.foo.FooActivity&quot;);</span></span></span></div></pre>
-    <h2
-        id="2-">2. アクション名</h2>
-        <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>呼び出し後に実行させたい動作。</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent.ACTION_VIEW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;表示する</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent.ACTION_MAIN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;タスクのルートアクティビティとして起動</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent.ACTION_CALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;電話をかける</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent.ACTION_EDIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;データの編集</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>例)</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>intent.setAction(Intent.ACTION_VIEW);</span></span></span></div></pre>
-        <h2
-            id="3-">3. カテゴリ</h2>
-            <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>アクションについての追加情報。</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent.CATEGORY_LAUNCHER&nbsp;&nbsp;&nbsp;&nbsp;ホームのアイコンから起動可能であることを示す。</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Inent.CATEGORY_BROWSABLE&nbsp;&nbsp;&nbsp;&nbsp;ブラウザから起動することが可能であることを示す</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>例)</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>intent.addCategory(Intent.CATEGORY_DEFAULT);</span></span></span></div></pre>
-            <h2
-                id="4-">4. データ</h2>
-                <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>アクションの対象となるデータの&nbsp;URI。</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>※データはURIのパスに絞り込み条件と、送る情報を含めることができるので、絞り込み条件であり対象に送るデータでもある。</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>例)</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>inent.setData(Uri.parse(&quot;</span><span class="markup underline link http hyperlink"><span>http://www.google.com/xxx/yyy?a=10</span></span><span>&quot;));</span></span></span></div></pre>
-                <ul>
-                    <li>
-                        <p>呼び出し対象に送るデータ</p>
-                    </li>
-                    <li>
-                        <p>エクストラ</p>
-                    </li>
-                </ul>
-                <hr>
-                <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>呼び出し先に渡す&nbsp;Bundle&nbsp;形式の追加情報。</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>例)</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>intent.putExtra(&quot;name&quot;,&nbsp;nameStr);</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&nbsp;&nbsp;intent.putExtra(&quot;num&quot;,&nbsp;i);</span></span></span></div></pre>
-                <h2
-                    id="6-">6. フラグ (インテントフラグとも言う)</h2>
-                    <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>アクティビティの起動方法。</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;</span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>例)</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|FLAG_ACTIVITY_CLEAR_TOP);</span></span></span></div></pre>
-                    <h2
-                        id="-">明示的インテントと暗黙的インテントとは？</h2>
-                        <ul>
-                            <li>呼び出し対象を一意に指定するインテントを「明示的インテント」という。絞り込み条件でいうと「コンポーネント名」を指定したインテント。</li>
-                            <li>一方、必ずしも一意にならないインテントを「暗黙的インテント」という。絞り込み条件でいうと「アクション名」「カテゴリ」「データ」を指定したインテント。</li>
-                        </ul>
-                        <h2 id="-">インテントの発行の例</h2>
-                        <p>例1) Foo アクティビティの起動</p>
-                        <pre class="editor-colors lang-java"><div class="line"><span class="source java"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="storage type java"><span>Intent</span></span><span>&nbsp;intent&nbsp;</span><span class="keyword operator assignment java"><span>=</span></span><span>&nbsp;</span><span class="keyword control new java"><span>new</span></span><span>&nbsp;</span><span class="storage type java"><span>Intent</span></span><span class="punctuation bracket round java"><span>(</span></span><span>context</span><span class="punctuation separator delimiter java"><span>,</span></span><span>&nbsp;</span><span class="variable other object java"><span>FooActivity</span></span><span class="punctuation separator period java"><span>.</span></span><span class="variable other property java"><span>class</span></span><span class="punctuation bracket round java"><span>)</span></span><span class="punctuation terminator java"><span>;</span></span></span></div><div class="line"><span class="source java"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta function-call java"><span class="entity name function java"><span>startActivity</span></span><span class="punctuation definition parameters begin bracket round java"><span>(</span></span><span>intent</span><span class="punctuation definition parameters end bracket round java"><span>)</span></span></span><span class="punctuation terminator java"><span>;</span></span></span></div></pre>
-                        <h2 id="-2-foo-">例2) Foo サービスの起動</h2>
-                        <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent&nbsp;intent&nbsp;=&nbsp;new&nbsp;Intent(context,&nbsp;FooService.class);</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>startService(intent);</span></span></span></div></pre>
-                        <h2
-                            id="-3-myaction-">例3) &quot;MyAction&quot; のブロードキャスト発行</h2>
-                            <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent&nbsp;intent&nbsp;=&nbsp;new&nbsp;Intent(&quot;MyAction&quot;);</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>sendBroadcast(intent);</span></span></span></div></pre>
-                            <h2
-                                id="-4-">例4) ブラウザ起動</h2>
-                                <ul>
-                                    <li>
-                                        <p>暗黙的インテント</p>
-                                        <p> Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(&quot;<a href="http://www.google.com">http://www.google.com</a>&quot;)); startActivity(intent);
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p>Android 標準ブラウザを指定する明示的インテント</p>
-                                        <p> Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(&quot;<a href="http://www.google.com">http://www.google.com</a>&quot;)); intent.setClassName(&quot;com.android.browser&quot;, &quot;com.android.browser.BrowserActivity&quot;);
-                                            startActivity(intent);
-                                        </p>
-                                    </li>
-                                </ul>
-                                <h2 id="-5-">例5) ダイアラー起動</h2>
-                                <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>Intent&nbsp;intent&nbsp;=&nbsp;new&nbsp;Intent(Intent.ACTION_DIAL,&nbsp;Uri.parse(&quot;tel:090xxxxxxxx&quot;));</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>startActivity(intent);</span></span></span></div></pre>
+    <h3>1. コンポーネント名</h3>
+    <pre>
+  ・呼び出し対象となるアプリケーションコンポーネントのクラス名。
+        例)
+        intent.setComponent(newComponent(samples.foo,samples.foo.FooActivity);
+    </pre>
+    <h3>2. アクション名</h3> 呼び出し後に実行させたい動作。
+    <pre>
+      Intent.ACTION_VIEW 表示する
+      Intent.ACTION_MAIN タスクのルートアクティビティとして起動
+      Intent.ACTION_CALL 電話をかける
+      Intent.ACTION_EDIT データの編集
+
+      例)
+      intent.setAction(Intent.ACTION_VIEW);
+    </pre>
+    <h3>3. カテゴリアクションについての追加情報。</h3>
+    <pre>
+      Intent.CATEGORY_LAUNCHER ホームのアイコンから起動可能であることを示す。
+      Inent.CATEGORY_BROWSABLE ブラウザから起動することが可能であることを示す。
+
+      例)
+      intent.addCategory(Intent.CATEGORY_DEFAULT);
+    </pre>
+    <h3>4. データ</h4>
+      アクションの対象となるデータの　URI。
+      ※データはURIのパスに絞り込み条件と、送る情報を含めることができるので、絞り込み条件であり対象に送るデータでもある。
+      <pre>
+      例)
+      inent.setData(Uri.parse( http://www.google.com/xxx/yyy?a=10
+    </pre>
+  <h3>5. フラグ (インテントフラグとも言う)</h3>
+    <h4>明示的インテントと暗黙的インテントとは？</h4>
+    <ul>
+        <li>呼び出し対象を一意に指定するインテントを「明示的インテント」という。絞り込み条件でいうと「コンポーネント名」を指定したインテント。</li>
+        <li>一方、必ずしも一意にならないインテントを「暗黙的インテント」という。絞り込み条件でいうと「アクション名」「カテゴリ」「データ」を指定したインテント。</li>
+    </ul>
+    <h2>3.インテントの発行の例</h2>
+    <pre>例1) Foo アクティビティの起動
+    Intent　intent = new Intendt (context,FooActivity.class); startActivity(intent);
+    </pre>
+    <pre>例2) Foo サービスの起動
+    Intent　intent = new Intent (context,　FooService.class); startService(intent);
+    </pre>
+    <pre>例3) MyAction  のブロードキャスト発行
+    Intent　intent　=　new　Intent( MyAction );
+    sendBroadcast(intent);
+    </pre>
+    <pre>例4) ブラウザ起動</pre>
+    <ul>
+        <li>
+            <p>暗黙的インテント</p>
+            <pre>
+Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(http://www.google.com));
+startActivity(intent);
+</pre>
+        </li>
+        <li>
+            <p>Android 標準ブラウザを指定する明示的インテント</p>
+            <pre>
+Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(http://www.google.com));
+intent.setClassName( com.android.browser , com.android.browser.BrowserActivity ); startActivity(intent);
+            </pre>
+        </li>
+    </ul>
+    <pre>例5) ダイアラー起動</pre>
+    <pre>
+    Intent　intent　=　new　Intent(Intent.ACTION_DIAL,Uri.parse( tel:090xxxxxxxx ));
+    startActivity(intent);
+  </pre>
 
 </body>
+
 </html>
