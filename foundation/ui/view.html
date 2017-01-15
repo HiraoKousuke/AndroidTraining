@@ -1,615 +1,276 @@
-
-### カスタムビューとは
-- カスタムビューとはプラットフォームにあらかじめ用意されているビュー以外に **自身で作ったオリジナルのビュー** のことをいう。
-- **View クラスを継承** してさえすれば Android でビューとして扱うことができ、`View` のサブクラスを作るだけでカスタムビューはできてしまう。
-- よくあるカスタムビューの作成パターンとして次のような３つがある。
-	1. **ネイティブのビューの機能を生かしつつ一部を拡張するパターン**<br>
-		例)
-		- テキストの両端に自動でキラキラ「。*:゜☆ こんにちは ☆゜:。*。」をつけてくれる「`Kira2TextView`」
-		- 画像の角を丸くしてくれる「`RoundImageView`」<br>
-			→ http://y-anz-m.blogspot.jp/2014/03/androidimageview.html
-	2. **ネイティブのビューを組み合わせて 1 つのビューにするパターン**<br>
-		例)
-		- 月を指定するだけでカレンダーが表示できる「`CalendarView`」
-		- レーティングの星(★★☆☆☆)を表示できる「`StarsView`」
-	3. **まったく新しい機能を持つビューにするパターン**<br>
-		例)
-		- 子に配置したビューを横幅に達したら自動で折り返してくれる「`FlowLayout`」<br>
-			→ https://gist.github.com/hzqtc/7940858
-		- 子に配置したビューをスワイプで移動したり、ピンチイン・アウトで拡縮できる「`ZoomLayout`」
-		- 座標を元に折れ線グラフを表示してくれる「`LineGraphView`」
-
-### カスタムビューの作成
-1. 何かしらのビュークラスを継承したクラスを作る。
-2. 用途に応じて下記のコンストラクタを定義。
-```text
-MyView(Context context)							-- Java で new MyView(context) する時用
-MyView(Context context, AttributeSet attrs)		-- XMLで定義した時用
-MyView(Context context, AttributeSet attrs, int defStyle):
-```
-3. ビューの中身を好きなように実装・・・
-4. レイアウトファイルで使用する場合はビューの要素名に **完全修飾クラス名** を指定。
-
-#### パターン1の例「Kira2TextView」
-
-```java
-// Kira2TextView.java
-public class Kira2TextView extends TextView {
-
-	public Kira2TextView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-
-	@Override
-	public void setText(CharSequence text, BufferType type) {
-		text = "。*:゜☆ " + text + " ☆゜:。*。";
-		super.setText(text, type);
-	}
-}
-```
-
-```xml
-<!-- test.xml -->
-<org.sample.Kira2TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="あいうえお"/>
-```
-
-<img src="img/kira2view.png" width="300" />
-
-
-### パターン2の例「StarsView」
-
-```xml
-<!-- startsview.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="horizontal">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/star_big_on"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/star_big_on"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/star_big_on"/>
-</LinearLayout>
-```
-
-```java
-// StarsView.java
-public class StarsView extends FrameLayout {
-
-	public StarsView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-
-		LayoutInflater.from(context).inflate(R.layout.startsview, this);
-	}
-}
-```
-
-```xml
-<!-- test.xml -->
-<org.sample.StarsView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-```
-
-<img src="img/starsview.png" width="200" />
-
-
-### パターン3の例「LineGraphView」
-```java
-// LineGraphView.java
-public class LineGraphView extends View {
-	private int[][] mPoints;
-
-	public LineGraphView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-
-	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-		if (mPoints == null) {
-			return;
-		}
-		Paint paint = new Paint();
-		paint.setStrokeWidth(10);
-		paint.setColor(Color.rgb(0, 0x80, 0x80));
-		paint.setStyle(Paint.Style.FILL);
-
-		for (int i = 0; i < mPoints.length - 1; i++) {
-			int[] p1 = mPoints[i];
-			int[] p2 = mPoints[i + 1];
-			canvas.drawLine(p1[0], p1[1], p2[0], p2[1], paint);
-			canvas.drawCircle(p1[0], p1[1], 20, paint);
-		}
-	}
-
-	public void setPoints(int[][] points) {
-		mPoints = points;
-		invalidate();
-	}
-}
-```
-
-```java
-// TestActivity.java
-int[][] points = { { 50, 50 }, { 200, 400 }, { 300, 200 }, { 400, 500 }};
-LineGraphView graph = (LineGraphView)findViewById(R.id.graph);
-graph.setPoints(points);
-```
-
-```xml
-<!-- test.xml -->
-<org.sample.LineGraphView
-    android:id="@+id/graph"
-    android:layout_width="300dp"
-    android:layout_height="200dp"
-    android:background="#eee"/>
-```
-
-<img src="img/linegraphview.png" width="300" />
-
-### リファレンス
-- [Creating a View Class | Android Developers](http://developer.android.com/intl/ja/training/custom-views/create-view.html)
-
-◆ カスタム属性の定義の仕方は
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-・カスタム属性は values 内に attrs.xml という名前で定義するのが一般的。
-・attrs.xml では <declare-styleable> と <attr> の要素を使って属性を定義する。
-	<declare-styleable>
-		… 属性をまとめる要素。(1つのカスタムビューの属性はこの中にまとめて定義される)。
-	<attr>
-		… 属性を定義する要素。
-・次のように定義する。
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-	<reasources>
-		<declare-styleable name="カスタムビューのクラス名(※1)">
-			<attr name="属性名" format="属性値の型" />
-			<attr name="属性名" format="属性値の型" />
-			<attr name="属性名">
-				<enum name="選択肢1" value="値" />
-				<enum name="選択肢2" value="値" />
-			</attr>
-			...
-		</declare-styleable>
-	</resources>
-
-	【format属性】
-		string		文字列
-		integer		整数
-		float		小数
-		boolean		true または false
-		color		カラー
-		dimension	ディメンション
-		reference	参照
-		※「|」で区切って複数指定することもできるっぽい。
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-	(※1) 実際はカスタムビューのクラス名じゃなくても動くが Android のソースも Developers もクラス名にしているからそれに倣った方がいい。
-
-
-◆ 同じ名前の属性を複数のカスタムビューで使用したい場合はどうする？
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-・同じ名前を持つ属性を declare-styleable が違っても複数定義することはできない。
-定義すると「error: Attribute "deco" has already been defined」のようにビルドエラーになる。
-例) deco 属性を2重で定義しビルドエラーになる例
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-	<resources>
-		<!-- DecoButtonの属性定義 -->
-    	<declare-styleable name="DecoButton">
-    	    <attr name="deco" format="string">
-    	        <enum name="star" value="0" />
-    	        <enum name="square" value="1" />
-    	    </attr>
-    	</declare-styleable>
-
-		<!-- SuperDecoButtonの属性定義 -->
-    	<declare-styleable name="SuperDecoButton">
-     	   <attr name="deco" format="string">
-     	       <enum name="star" value="0" />
-     	       <enum name="square" value="1" />
-     	   </attr>
-    	</declare-styleable>
-	<resources>
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-
-・複数のカスタムビューで同じ属性を定義したい場合は <resources> の直下に属性を定義し、各カスタムビューで共通でその属性を使うという定義の仕方にする。各カスタムビューで属性を使う場合は「<attr name="属性名" />」のように name 属性だけを定義する。
-例)
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-	<resources>
-		<!-- deco属性の定義 -->
-		<attr name="deco" format="string">
-			<enum name="star" value="0" />
-			<enum name="square" value="1" />
-		</attr>
-
-		<!-- DecoButtonの属性定義 -->
-		<declare-styleable name="DecoButton">
-			<attr name="deco" />
-		</declare-styleable>
-
-		<!-- SuperDecoButtonの属性定義 -->
-		<declare-styleable name="SuperDecoButton">
-			<attr name="deco" />
-		</declare-styleable>
-	<resources>
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-
-
-◆ Android SDK 内にある Android の attrs.xml
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-・TextViewなど標準のビューも同じように属性定義されている。下記ファイルを見るとそれが分かる。
-	{SDK_HOME}/platforms/android-19/data/res/values/attrs.xml
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-	<resources>
-		...
-		<attr name="textSize" format="dimension"/>
-		<attr name="textColor" format="reference|color"/>
-		...
-		<declare-styleable name="TextView">
-			<attr name="text" format="string" localization="suggested"/>
-			<attr name="textColor"/>
-			<attr name="textSize"/>
-			...
-		</declare-styleable />
-
-		<declare-styleable name="ImageView">
-			<attr name="src" format="reference|color"/>
-			<attr name="scaleType">
-				<enum name="matrix" value="0"/>
-				<enum name="fitXY" value="1"/>
-				<enum name="fitStart" value="2"/>
-				<enum name="fitCenter" value="3"/>
-				<enum name="fitEnd" value="4"/>
-				<enum name="center" value="5"/>
-				<enum name="centerCrop" value="6"/>
-				<enum name="centerInside" value="7"/>
-			</attr>
-			...
-		</declare-styleable />
-
-	</resources>
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-
-
-◆ レイアウトファイルでカスタム属性使うには？
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-・自分のプロジェクトの属性リソースを指定する名前空間を定義する。
-	xmlns:app="http://schemas.android.com/apk/アプリのパッケージ名"
-	※app部分は何でもいい
-・「app:カスタム属性」で属性指定する。
-
-例)
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    	xmlns:app="http://schemas.android.com/apk/demo.ui.customlib"
-    	android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
-
-    	<demo.ui.customlib.DecoButton
-    	    android:layout_width="wrap_content"
-    	    android:layout_height="wrap_content"
-    	    android:text="abc"
-    	    android:textSize="16sp"
-    	    app:deco="square" />
-	</LinearLayout>
-	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-
-
-◆ カスタム属性の取得の仕方
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-・AttributeSet にはビューに設定されている属性の情報が入っている。
-・ビューのコンストラクタで渡ってくる AttributeSet からカスタム属性値の値も取り出せる。
-・取り出す手順
-	(1) Context#obtainStyledAttributes(AttributeSet, 属性リソースIDの配列) で指定した属性の値を TypedArray として取得。
-		※属性リソースIDの配列について
-		・「R.styleable.{declare-styleableの名前}」はその中に定義された属性リソースのID配列が入ってる。
-		・ new int[]{R.attr.{属性名}, R.attr.{属性名}, ...} のように指定することもできるが、
-		　この場合はリソースIDの並び順がIDの値の昇順(?)で並べないとちゃんと値が取れない。
-	(2) TypedArray から値を取り出す。
-		・「TypedArray#getXxx(int index, int defValue)」のように取得するが、
-		　第一引数は具体的な数字じゃなくて「R.styleable.{declare-styleableの名前}_{属性名}」の形で指定することができる。
-	(3) TypedArray の使用が終わったら「TypedArray#recycle()」を呼ぶ必要がある。
-		※呼ばないとちゃんと破棄してくれない。
-
-	例)
-		～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-		<declare-styleable name="DecoButton">
-			<attr name="decoText" format="string" />
-			<attr name="decoSize" format="dimension" />
-			<attr name="deco">
-				<enum name="star" value="0" />
-				<enum name="square" value="1" />
-			</attr>
-		</declare-styleable>
-
-		～～
-		TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.DecoButton);
-		String decoText = ta.getString(R.styleable.DecoButton_decoText);
-		float decoSize = ta.getDimension(R.styleable.DecoButton_decoSize, 0);
-		int deco = ta.getInt(R.styleable.DecoButton_deco, 0);
-		～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-
-
-◆ styles.xmlにカスタム属性を使うには？
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-次のようにするとXMLエラーになる。
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res/jp.sk.sample">
-	<style name="my_style">
-		<item name="app:myattr">10dp</item>
-	</style>
-</resources>
-
-[原因]
-スタイルでは名前空間指定ができないらしい。
-でも、アプリのパッケージがデフォルトの名前空間になってるので名前空間無しで指定すればOK。
-
-例)
-	<resources xmlns:android="http://schemas.android.com/apk/res/android">
-		<style name="my_style">
-			<item name="myattr">10dp</item>
-		</style>
-	</resources>
-  ※ 本記事は Eclipse ベースで書かれおり、一部 Studio 用に読み替える必要があります。
-
-  ◆ カスタムビューを Android Library にして使うには？
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  ・カスタムビュー用のプロジェクトを普通のAndroid プロジェクトとして作成し、その中にカスタムビューやカスタム属性を作る。
-  ・カスタムビューのプロジェクトを Eclipse で右クリック＞Properties＞Androidを開き「Is Library」のチェックボックスにチェックを入れる。（これでプロジェクトが Android Library になる)
-  ※Android Library にするとこのプロジェクト単体での実行ができなくなることに注意。外せばできる。
-  ・Android Library を利用するAndroid プロジェクトを作成し、レイアウトファイルで下記のようにして使用できる。
-
-  例)
-  	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-  	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  		xmlns:app="http://schemas.android.com/apk/demo.ui.customlibtest" ←①
-  		android:layout_width="match_parent"
-  		android:layout_height="match_parent" >
-
-  		<demo.ui.customlib.DecoButton ←②
-  			android:layout_width="wrap_content"
-  			android:layout_height="wrap_content"
-  			android:text="abc"
-  			app:deco="square" ←③
-  		/>
-
-  	</LinearLayout>
-  	～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-  	① 自身のプロジェクトのパッケージ名の名前空間を定義
-  	② Library プロジェクト内にあるカスタムビューの完全修飾クラス名で指定
-  	③ ①の名前空間を使ってカスタム属性を使用。
-
-
-  ○注意点
-  (1) Android Library 内のレイアウトファイルでカスタム属性を使うために定義する名前空間は
-  「xmlns:app="http://schemas.android.com/apk/パッケージ名"」じゃなくて
-  「xmlns:app="http://schemas.android.com/apk/res-auto"」
-  にする必要があります。ADT17からres-autoを指定しないとビルドエラーになるようになった。
-  「res-auto」はプロジェクトのパッケージ名に自動で置き換わるというもの。
-
-  (2) Android Library を使うと、その Library 内のresファイルの内容が使用する側のプロジェクトのものとして扱われます。なので、同じリソース名を持つものを自身のプロジェクトで定義すると自身のもので上書きされます。
-  レイアウトファイルの場合は同じ名前のレイアウトを作ると上書きされる。
-  resourcesリソース(<string>とか<style>など)は同じ名前のリソースを定義すると上書きされる。
-
-  	Libraryプロジェクト/			自身のプロジェクト/
-  	res/							res/
-  		layout/							layout/
-  			aaa.xml	---------------------->	aaa.xml
-  		values/									bbb.xml
-  			attrs.xml						values/
-  				└------------------------>		attrs.xml (実際は中身のみ持ってくる)
-
-          ### TextView とは
-          - テキスト。
-
-          例)
-          ```xml
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="Hello Android" />
-          ```
-
-          ### 主要属性
-          |属性|説明|
-          |:-----------|:------------|
-          |text|文字|
-          |textSize|文字サイズ|
-          |textColor|文字色|
-          |fontStyle|文字スタイル(太字、イタリック、通常)を設定。|
-          |line|行数の固定値|
-          |maxLine|行数の最大値|
-          |drawable{Left｜Top｜Right｜Bottom}|テキストの上下左右に配置するドローアブル|
-          |ellipsize|テキストが表示領域に収まらない場合の省略方法。|
-
-          **たまに使う属性**
-
-          |属性|説明|
-          |:-----------|:------------|
-          |typeface|タイプフェース(書体)|
-          |fontFamily|フォントファミリー|
-
-          [TextView で使える属性](https://developer.android.com/reference/android/widget/TextView.html#lattrs)
-
-
-          ### Spannable
-          - `TextView` はただの文字を表示するだけじゃなく、文字の一部を装飾したテキストも表示できる。
-          その場合、ただの文字列ではなく装飾ができるテキスト(`Spannable`)を用意してそれを `TextView` に設定する必要がある。
-          - `Spannable` とはテキストの一部にフォント/色/サイズなどのマークをつけることで装飾できるようにしたテキスト。
-
-          例) "ヌガー"部分を太字に装飾
-          ```java
-          SpannableString s = new SpannableString("次のバージョンはヌガーです。");
-          s.setSpan(new StyleSpan(Typeface.BOLD), 8, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-          ```
-
-
-          ### HTMLタグの使用
-          #### Point
-          - `Html#fromHtml()` は引数で指定した文字列の HTML タグ部分を装飾したテキストに変換する。
-          - 文字列リソースとして XML に定義する場合、タグ <> をエスケープ文字で記述する必要がある。<br>
-          ※ XML では<>や&を値として書きたい場合はエスケープする必要がある。(XMLの文法)
-
-          例)
-          ```xml
-          <!-- strings.xml -->
-          <string name="hoge">&lt;font color="green"&gt;&lt;b&gt;Android&lt;/b&gt;&lt;/font&gt;の文字を緑にします。</string>
-          ```
-
-          ```java
-          // TestActivity.java
-          TextView textView = (TextView)findViewById(R.id.main_textview);
-          textView.setText(Html.fromHtml(getString(R.string.hoge)));
-          // java で書く場合は
-          // textView.setText(Html.fromHtml("<font color=\"green\"><b>Android</b></font>の文字を緑にします。"));
-          ```
-
-          ### Tips
-          ##### ◆ TextView にアイコン画像表示して、テキストを画像の上下真ん中に表示するには？
-
-          例)
-          ```xml
-          <TextView
-          	android:layout_width="wrap_content"
-          	android:layout_height="wrap_content"
-          	android:drawableLeft="@drawable/common_no_image"
-          	android:gravity="center_vertical"
-          	android:text="あいうえお" />
-          ```
-
-          ##### ◆「drawable{Left|Top|Right|Bottom}」を Java で設定するには？
-          ```java
-          TextView#setCompoundDrawablesWithIntrinsicBounds(int left, int top, int right, int bottom)
-          ```
-          ※ 設定しない部分には 0 を指定
-
-          ##### ◆ ellipsize を Java で設定する場合の定数値は？
-          ```java
-          TextUtils.TruncateAt.START		:文字列先頭を省略
-          TextUtils.TruncateAt.MIDDLE		:文字列の真ん中を省略
-          TextUtils.TruncateAt.END		:文字列終端を省略
-          TextUtils.TruncateAt.MARQUEE	:文字列をスクロールして表示
-          ```
-
-          ### リファレンス
-          - [Android　Spannable を使って文字列の一部を装飾する](http://y-anz-m.blogspot.jp/2011/08/androidspannable.html)
-          - [TextView を使いこなそう　～ 表示編 ～　 その２](http://d.hatena.ne.jp/androidprogram/20100516/1274028591)
-          - [【Android】TextViewでHtmlスタイルの文字列を表示する](http://www.mori-soft.com/index.php?option=com_content&view=article&id=92:androidtextviewhtml&catid=7:smartphone&Itemid=14)
-          - [1.11 フォントの種類の指定](http://www.tg.rim.or.jp/~hexane/ach/lbcs/lbcs1-11.htm)
-
-          ### Button とは
-          - ボタン。
-
-          ![alt](https://developer.android.com/images/ui/button-types.png)
-
-          例)
-          ```xml
-          <Button
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="送信する" />
-          ```
-
-          ### Button の使い方
-          - ボタンに文言を設定したい場合は `text` 属性で指定する。`Button` は `TextView` を継承しているので、テキストのカスタマイズは `TextView` と同様のものが使える。
-          - ボタンの背景色や押下時の色はテーマで設定されているものが使われる。
-          独自背景や、独自画像のボタンにしたい場合は `background` 属性で指定。
-          - ボタンクリック時のイベントは「`View.OnClickListener`」で検知できる。<br>
-          例)
-          ```java
-          public class TestActivity extends AppCompatActivity implements View.OnClickListener {
-          	...
-          	Button button = (Button)findViewById(R.id.mybutton);
-          	button.setOnClickListener(this);
-          	...
-          	@Override
-          	public void onClick(final View view) {
-          		// ボタンクリック時に実行したい処理
-          	}
-          }
-          ```
-
-          ### 主要属性
-          |属性|説明|
-          |:-----------|:------------|
-          |TextView の主要属性|※ TextView 参照|
-
-          [Button で使える属性](https://developer.android.com/reference/android/widget/Button.html#inhattrs)
-
-
-          ### リファレンス
-          [Buttons | Developers](https://developer.android.com/guide/topics/ui/controls/button.html)
-
-          ### EditText とは
-          - テキストボックス
-
-          ![alt](https://developer.android.com/images/ui/edittext-noextract.png)
-
-          例)
-          ```xml
-          <EditText
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:hint="氏名を入力してください"/>
-          ```
-
-          ### EditText の使い方
-          - テキストを設定したい場合は `text` 属性で指定する。`EditText` は `TextView` を継承しているので、テキストのカスタマイズは `TextView` と同様のものが使える。
-          - 入力されたテキストを取得する場合、`EditText#getText()` を使うが、これは `SpannableStringBuilder` インスタンスを返すので単純なテキストにしたい場合は `toString()` する必要がある。<br>
-          例)
-          ```java
-          EditText editText = (EditText)findViewById(R.id.editext);
-          String text = ((SpannableStringBuilder)editText.getText()).toString();
-          ```
-          - EditText の入力値の変更を検知するには「TextWatcher」を使う。TextWatcher のイベントハンドラは下記の通り。<br>
-          ```text
-          beforeTextChanged()	:テキストが変更される直前で呼ばれる。
-          afterTextChanged()	:テキストが変更された直後で呼ばれる。
-          onTextChanged()		:テキストの変更中に呼ばれる。※ これと afterTextChanged() のタイミングの差がわからない・・・
-          ```
-          例)
-          ```java
-          EditText editText = (EditText)findViewById(R.id.editext);
-          editText.addTextChangedListener(new TextWatcher() {
-          	@Override
-          	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-          	}
-
-          	@Override
-          	public void onTextChanged(CharSequence s, int start, int before, int count) {
-          	}
-
-          	@Override
-          	public void afterTextChanged(Editable s) {
-          		Log.d("#", "文字数=" + s.length());
-          	}
-          });
-          ```
-          - キーボードの決定ボタンクリックを検知するには「`TextView.OnEditorActionListener`」を使う。
-
-
-          ### 主要属性
-          |属性|説明|
-          |:-----------|:------------|
-          |TextView の主要属性|※ TextView 参照|
-          |hint|入力ヒント|
-          |inputType|入力タイプ(ここで指定した入力タイプのキーボードが表示される)|
-          |imeOptions|キーボードの決定ボタンの種類|
-
-          [EditText で使える属性](https://developer.android.com/reference/android/widget/EditText.html#inhattrs)
-
-
-          ### リファレンス
-          [Text Fields | Developers](https://developer.android.com/guide/topics/ui/controls/text.html)
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+
+<body>
+    <h1>カスタムビューとは</h1> カスタムビューとはプラットフォームにあらかじめ用意されているビュー以外に自身で作ったオリジナルのビューのことをいう。
+    <br> View クラスを継承してさえすれば Android でビューとして扱うことができ、Viewのサブクラスを作るだけでカスタムビューはできてしまう。<br> よくあるカスタムビューの作成パターンとして次のような３つがある。
+
+    <h4>1. ネイティブのビューの機能を生かしつつ一部を拡張するパターン</h4> 例)
+    <ul>
+        <li>テキストの両端に自動でキラキラ「。*:゜☆ こんにちは ☆゜:。*。」をつけてくれる「`Kira2TextView`」</li>
+        <li>画像の角を丸くしてくれる「`RoundImageView`」</li>
+    </ul>
+    <pre>参考:http://y-anz-m.blogspot.jp/2014/03/androidimageview.html</pre>
+    <h4>2. ネイティブのビューを組み合わせて 1 つのビューにするパターン</h4> 例)
+    <ul>
+        <li>月を指定するだけでカレンダーが表示できる「`CalendarView`」</li>
+        <li>レーティングの星(★★☆☆☆)を表示できる「`StarsView`」</li>
+    </ul>
+    <h4>3. まったく新しい機能を持つビューにするパターン</h4> 例)
+    <ul>
+        <li>
+            子に配置したビューを横幅に達したら自動で折り返してくれる「`FlowLayout`」</li> 参考: https://gist.github.com/hzqtc/7940858
+        <li>子に配置したビューをスワイプで移動したり、ピンチイン・アウトで拡縮できる「`ZoomLayout`」</li>
+        <li>座標を元に折れ線グラフを表示してくれる「`LineGraphView`」 </li>
+    </ul>
+
+    <h1>カスタムビューの作成</h1>
+    <h4>1. 何かしらのビュークラスを継承したクラスを作る。</h4>
+    <h4>2. 用途に応じて下記のコンストラクタを定義。</h4>
+    <pre>
+            text MyView(Context context)
+            -- Java で new MyView(context) する時用 MyView(Context context, AttributeSet attrs)
+            -- XMLで定義した時用 MyView(Context context, AttributeSet attrs, int defStyle):
+            3. ビューの中身を好きなように実装・・・
+            4. レイアウトファイルで使用する場合はビューの要素名に 完全修飾クラス名を指定。
+    </pre>
+
+    <h3>・パターン1の例</h3>
+    <b>「Kira2TextView」</b><br> // Kira2TextView.java
+    <pre>
+    <code>
+  public class Kira2TextView extends TextView {
+    public Kira2TextView(Context context, AttributeSet attrs) { super(context, attrs); } @Override public void setText(CharSequence text, BufferTypetype) {
+      text = "。*:゜☆ " + text + " ☆゜:。*。";
+      super.setText(text, type);
+    }
+  }
+</code>
+</pre>
+    <pre>
+<code>
+            <!-- test.xml -->
+            <org.sample.Kira2TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="あいうえお" /> ```
+
+            <img src="img/kira2view.png" width="300" />
+          </code>
+          </pre>
+          パターン2の例「StarsView」
+
+    <!-- startsview.xml -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal">
+
+        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
+
+        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
+
+        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
+    </LinearLayout>
+
+    // StarsView.java public class StarsView extends FrameLayout { public StarsView(Context context, AttributeSet attrs) { super(context, attrs); LayoutInflater.from(context).inflate(R.layout.startsview, this); } } ``` ```xml
+    <!-- test.xml -->
+    <org.sample.StarsView android:layout_width="wrap_content" android:layout_height="wrap_content" /> ```
+
+    <img src="img/starsview.png" width="200" /> パターン3の例「LineGraphView」 // LineGraphView.java public class LineGraphView extends View { private int[][] mPoints; public LineGraphView(Context context, AttributeSet attrs) { super(context,attrs); } @Override
+    protected void onDraw(Canvas canvas) { super.onDraw(canvas); if (mPoints == null) { return; } Paint paint = new Paint(); paint.setStrokeWidth(10); paint.setColor(Color.rgb(0, 0x80, 0x80)); paint.setStyle(Paint.Style.FILL); for (int i = 0; i
+    < mPoints.length
+        - 1; i++) { int[] p1=m Points[i]; int[] p2=m Points[i + 1]; canvas.drawLine(p1[0], p1[1], p2[0], p2[1], paint); canvas.drawCircle(p1[0], p1[1], 20, paint); } } public void setPoints(int[][] points) { mPoints=p oints; invalidate(); } } // TestActivity.java
+        int[][] points={ { 50, 50 }, { 200, 400 }, { 300, 200 }, { 400, 500 }}; LineGraphView graph=( LineGraphView)findViewById(R.id.graph); graph.setPoints(points); <!-- test.xml -->
+        <org.sample.LineGraphView android:id="@+id/graph" android:layout_width="300dp" android:layout_height="200dp" android:background="#eee" /> ```
+
+        <img src="img/linegraphview.png" width="300" /> ### リファレンス - [Creating a View Class | Android Developers](http://developer.android.com/intl/ja/training/custom-views/create-view.html) ◆ カスタム属性の定義の仕方は ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・カスタム属性は
+        values 内に attrs.xml という名前で定義するのが一般的。 ・attrs.xml では
+        <declare-styleable> と
+            <attr> の要素を使って属性を定義する。
+                <declare-styleable>
+                    … 属性をまとめる要素。(1つのカスタムビューの属性はこの中にまとめて定義される)。
+                    <attr>
+                        … 属性を定義する要素。 ・次のように定義する。 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+                        <reasources>
+                            <declare-styleable name="カスタムビューのクラス名(※1)">
+                                <attr name="属性名" format="属性値の型" />
+                                <attr name="属性名" format="属性値の型" />
+                                <attr name="属性名">
+                                    <enum name="選択肢1" value="値" />
+                                    <enum name="選択肢2" value="値" />
+                                </attr>
+                                ...
+                            </declare-styleable>
+                            </resources>
+
+                            【format属性】 string 文字列 integer 整数 float 小数 boolean true または false color カラー dimension ディメンション reference 参照 ※「|」で区切って複数指定することもできるっぽい。 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ (※1) 実際はカスタムビューのクラス名じゃなくても動くが Android のソースも Developers もクラス名にしているからそれに倣った方がいい。 ◆ 同じ名前の属性を複数のカスタムビューで使用したい場合はどうする？
+                            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・同じ名前を持つ属性を declare-styleable が違っても複数定義することはできない。 定義すると「error: Attribute "deco" has already been defined」のようにビルドエラーになる。 例) deco 属性を2重で定義しビルドエラーになる例 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+                            <resources>
+                                <!-- DecoButtonの属性定義 -->
+                                <declare-styleable name="DecoButton">
+                                    <attr name="deco" format="string">
+                                        <enum name="star" value="0" />
+                                        <enum name="square" value="1" />
+                                    </attr>
+                                </declare-styleable>
+
+                                <!-- SuperDecoButtonの属性定義 -->
+                                <declare-styleable name="SuperDecoButton">
+                                    <attr name="deco" format="string">
+                                        <enum name="star" value="0" />
+                                        <enum name="square" value="1" />
+                                    </attr>
+                                </declare-styleable>
+                                <resources>
+                                    ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ ・複数のカスタムビューで同じ属性を定義したい場合は
+                                    <resources> の直下に属性を定義し、各カスタムビューで共通でその属性を使うという定義の仕方にする。各カスタムビューで属性を使う場合は「
+                                        <attr name="属性名" />」のように name 属性だけを定義する。 例) ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+                                        <resources>
+                                            <!-- deco属性の定義 -->
+                                            <attr name="deco" format="string">
+                                                <enum name="star" value="0" />
+                                                <enum name="square" value="1" />
+                                            </attr>
+
+                                            <!-- DecoButtonの属性定義 -->
+                                            <declare-styleable name="DecoButton">
+                                                <attr name="deco" />
+                                            </declare-styleable>
+
+                                            <!-- SuperDecoButtonの属性定義 -->
+                                            <declare-styleable name="SuperDecoButton">
+                                                <attr name="deco" />
+                                            </declare-styleable>
+                                            <resources>
+                                                ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ ◆ Android SDK 内にある Android の attrs.xml ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・TextViewなど標準のビューも同じように属性定義されている。下記ファイルを見るとそれが分かる。 {SDK_HOME}/platforms/android-19/data/res/values/attrs.xml ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+                                                <resources>
+                                                    ...
+                                                    <attr name="textSize" format="dimension" />
+                                                    <attr name="textColor" format="reference|color" /> ...
+                                                    <declare-styleable name="TextView">
+                                                        <attr name="text" format="string" localization="suggested" />
+                                                        <attr name="textColor" />
+                                                        <attr name="textSize" /> ...
+                                                        </declare-styleable />
+
+                                                        <declare-styleable name="ImageView">
+                                                            <attr name="src" format="reference|color" />
+                                                            <attr name="scaleType">
+                                                                <enum name="matrix" value="0" />
+                                                                <enum name="fitXY" value="1" />
+                                                                <enum name="fitStart" value="2" />
+                                                                <enum name="fitCenter" value="3" />
+                                                                <enum name="fitEnd" value="4" />
+                                                                <enum name="center" value="5" />
+                                                                <enum name="centerCrop" value="6" />
+                                                                <enum name="centerInside" value="7" />
+                                                            </attr>
+                                                            ...
+                                                            </declare-styleable />
+
+                                                </resources>
+                                                ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ ◆ レイアウトファイルでカスタム属性使うには？ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・自分のプロジェクトの属性リソースを指定する名前空間を定義する。 xmlns:app="http://schemas.android.com/apk/アプリのパッケージ名" ※app部分は何でもいい ・「app:カスタム属性」で属性指定する。 例) ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+                                                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/demo.ui.customlib" android:layout_width="match_parent" android:layout_height="match_parent">
+
+                                                    <demo.ui.customlib.DecoButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="abc" android:textSize="16sp" app:deco="square" />
+                                                </LinearLayout>
+                                                ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ ◆ カスタム属性の取得の仕方 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・AttributeSet にはビューに設定されている属性の情報が入っている。 ・ビューのコンストラクタで渡ってくる AttributeSet からカスタム属性値の値も取り出せる。 ・取り出す手順 (1) Context#obtainStyledAttributes(AttributeSet, 属性リソースIDの配列) で指定した属性の値を
+                                                TypedArray として取得。 ※属性リソースIDの配列について ・「R.styleable.{declare-styleableの名前}」はその中に定義された属性リソースのID配列が入ってる。 ・ new int[]{R.attr.{属性名}, R.attr.{属性名}, ...} のように指定することもできるが、 　この場合はリソースIDの並び順がIDの値の昇順(?)で並べないとちゃんと値が取れない。
+                                                (2) TypedArray から値を取り出す。 ・「TypedArray#getXxx(int index, int defValue)」のように取得するが、 　第一引数は具体的な数字じゃなくて「R.styleable.{declare-styleableの名前}_{属性名}」の形で指定することができる。 (3) TypedArray の使用が終わったら「TypedArray#recycle()」を呼ぶ必要がある。
+                                                ※呼ばないとちゃんと破棄してくれない。 例) ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+                                                <declare-styleable name="DecoButton">
+                                                    <attr name="decoText" format="string" />
+                                                    <attr name="decoSize" format="dimension" />
+                                                    <attr name="deco">
+                                                        <enum name="star" value="0" />
+                                                        <enum name="square" value="1" />
+                                                    </attr>
+                                                </declare-styleable>
+
+                                                ～～ TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.DecoButton); String decoText = ta.getString(R.styleable.DecoButton_decoText); float decoSize = ta.getDimension(R.styleable.DecoButton_decoSize, 0); int deco = ta.getInt(R.styleable.DecoButton_deco,
+                                                0); ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ ◆ styles.xmlにカスタム属性を使うには？ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 次のようにするとXMLエラーになる。
+                                                <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/jp.sk.sample">
+                                                    <style name="my_style">
+                                                        <item name="app:myattr">10dp</item>
+                                                    </style>
+                                                </resources>
+
+                                                [原因] スタイルでは名前空間指定ができないらしい。 でも、アプリのパッケージがデフォルトの名前空間になってるので名前空間無しで指定すればOK。 例)
+                                                <resources xmlns:android="http://schemas.android.com/apk/res/android">
+                                                    <style name="my_style">
+                                                        <item name="myattr">10dp</item>
+                                                    </style>
+                                                </resources>
+                                                ※ 本記事は Eclipse ベースで書かれおり、一部 Studio 用に読み替える必要があります。 ◆ カスタムビューを Android Library にして使うには？ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・カスタムビュー用のプロジェクトを普通のAndroid プロジェクトとして作成し、その中にカスタムビューやカスタム属性を作る。 ・カスタムビューのプロジェクトを Eclipse で右クリック＞Properties＞Androidを開き「Is Library」のチェックボックスにチェックを入れる。（これでプロジェクトが
+                                                Android Library になる) ※Android Library にするとこのプロジェクト単体での実行ができなくなることに注意。外せばできる。 ・Android Library を利用するAndroid プロジェクトを作成し、レイアウトファイルで下記のようにして使用できる。 例) ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+                                                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/demo.ui.customlibtest" ←① android:layout_width="match_parent" android:layout_height="match_parent">
+
+                                                    <demo.ui.customlib.DecoButton ←② android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="abc" app:deco="square" ←③ />
+
+                                                </LinearLayout>
+                                                ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ ① 自身のプロジェクトのパッケージ名の名前空間を定義 ② Library プロジェクト内にあるカスタムビューの完全修飾クラス名で指定 ③ ①の名前空間を使ってカスタム属性を使用。 ○注意点 (1) Android Library 内のレイアウトファイルでカスタム属性を使うために定義する名前空間は 「xmlns:app="http://schemas.android.com/apk/パッケージ名"」じゃなくて 「xmlns:app="http://schemas.android.com/apk/res-auto"」
+                                                にする必要があります。ADT17からres-autoを指定しないとビルドエラーになるようになった。 「res-auto」はプロジェクトのパッケージ名に自動で置き換わるというもの。 (2) Android Library を使うと、その Library 内のresファイルの内容が使用する側のプロジェクトのものとして扱われます。なので、同じリソース名を持つものを自身のプロジェクトで定義すると自身のもので上書きされます。
+                                                レイアウトファイルの場合は同じ名前のレイアウトを作ると上書きされる。 resourcesリソース(
+                                                <string>とか
+                                                    <style>
+                                                        など)は同じ名前のリソースを定義すると上書きされる。 Libraryプロジェクト/ 自身のプロジェクト/ res/ res/ layout/ layout/ aaa.xml ---------------------->aaa.xml values/ bbb.xml attrs.xml values/ └------------------------>attrs.xml (実際は中身のみ持ってくる) ### TextView とは - テキスト。 例) ```xml <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hello Android" />``` ### 主要属性 |属性|説明| |:-----------|:------------| |text|文字| |textSize|文字サイズ| |textColor|文字色| |fontStyle|文字スタイル(太字、イタリック、通常)を設定。| |line|行数の固定値| |maxLine|行数の最大値| |drawable {
+                                                            Left｜Top｜Right｜Bottom
+                                                        }
+
+                                                        |テキストの上下左右に配置するドローアブル| |ellipsize|テキストが表示領域に収まらない場合の省略方法。| **たまに使う属性** |属性|説明| |:-----------|:------------| |typeface|タイプフェース(書体)| |fontFamily|フォントファミリー| [TextView で使える属性](https: //developer.android.com/reference/android/widget/TextView.html#lattrs)
+                                                        ### Spannable - `TextView` はただの文字を表示するだけじゃなく、文字の一部を装飾したテキストも表示できる。 その場合、ただの文字列ではなく装飾ができるテキスト(`Spannable`)を用意してそれを `TextView` に設定する必要がある。 - `Spannable` とはテキストの一部にフォント/色/サイズなどのマークをつけることで装飾できるようにしたテキスト。 例) "ヌガー"部分を太字に装飾 ```java SpannableString s=new SpannableString("次のバージョンはヌガーです。");
+                                                        s.setSpan(new StyleSpan(Typeface.BOLD),
+                                                        8,
+                                                        11,
+                                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                        ``` ### HTMLタグの使用 #### Point - `Html#fromHtml()` は引数で指定した文字列の HTML タグ部分を装飾したテキストに変換する。 - 文字列リソースとして XML に定義する場合、タグ <>をエスケープ文字で記述する必要がある。<br>※ XML では<>や&を値として書きたい場合はエスケープする必要がある。(XMLの文法) 例) ```xml <!-- strings.xml --><string name="hoge">&lt;
+                                                        font color="green"&gt;
+                                                        &lt;
+                                                        b&gt;
+                                                        Android&lt;
+                                                        /b&gt;
+                                                        &lt;
+                                                        /font&gt;
+                                                        の文字を緑にします。</string>``` ```java // TestActivity.java
+                                                        TextView textView=(TextView)findViewById(R.id.main_textview);
+                                                        textView.setText(Html.fromHtml(getString(R.string.hoge)));
+                                                        // java で書く場合は
+                                                        // textView.setText(Html.fromHtml("<font color=\"green\"><b>Android</b></font>の文字を緑にします。"));
+                                                        ``` ### Tips ##### ◆ TextView にアイコン画像表示して、テキストを画像の上下真ん中に表示するには？ 例) ```xml <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:drawableLeft="@drawable/common_no_image" android:gravity="center_vertical" android:text="あいうえお" />``` ##### ◆「drawable {
+                                                            Left|Top|Right|Bottom
+                                                        }
+
+                                                        」を Java で設定するには？ ```java TextView#setCompoundDrawablesWithIntrinsicBounds(int left,
+                                                        int top,
+                                                        int right,
+                                                        int bottom) ``` ※ 設定しない部分には 0 を指定 ##### ◆ ellipsize を Java で設定する場合の定数値は？ ```java TextUtils.TruncateAt.START:文字列先頭を省略 TextUtils.TruncateAt.MIDDLE:文字列の真ん中を省略 TextUtils.TruncateAt.END:文字列終端を省略 TextUtils.TruncateAt.MARQUEE:文字列をスクロールして表示 ``` ### リファレンス - [Android Spannable を使って文字列の一部を装飾する](http: //y-anz-m.blogspot.jp/2011/08/androidspannable.html)
+                                                        - [TextView を使いこなそう ～ 表示編 ～ その２](http: //d.hatena.ne.jp/androidprogram/20100516/1274028591)
+                                                        - [【Android】TextViewでHtmlスタイルの文字列を表示する](http: //www.mori-soft.com/index.php?option=com_content&view=article&id=92:androidtextviewhtml&catid=7:smartphone&Itemid=14)
+                                                        - [1.11 フォントの種類の指定](http: //www.tg.rim.or.jp/~hexane/ach/lbcs/lbcs1-11.htm)
+                                                        ### Button とは - ボタン。 ![alt](https: //developer.android.com/images/ui/button-types.png)
+                                                        例) ```xml <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="送信する" />``` ### Button の使い方 - ボタンに文言を設定したい場合は `text` 属性で指定する。`Button` は `TextView` を継承しているので、テキストのカスタマイズは `TextView` と同様のものが使える。 - ボタンの背景色や押下時の色はテーマで設定されているものが使われる。 独自背景や、独自画像のボタンにしたい場合は `background` 属性で指定。 - ボタンクリック時のイベントは「`View.OnClickListener`」で検知できる。<br>例) ```java public class TestActivity extends AppCompatActivity implements View.OnClickListener {
+                                                            ... Button button=(Button)findViewById(R.id.mybutton);
+                                                            button.setOnClickListener(this);
+                                                            ... @Override public void onClick(final View view) {
+                                                                // ボタンクリック時に実行したい処理
+                                                            }
+                                                        }
+
+                                                        ``` ### 主要属性 |属性|説明| |:-----------|:------------| |TextView の主要属性|※ TextView 参照| [Button で使える属性](https: //developer.android.com/reference/android/widget/Button.html#inhattrs)
+                                                        ### リファレンス [Buttons | Developers](https: //developer.android.com/guide/topics/ui/controls/button.html)
+                                                        ### EditText とは - テキストボックス ![alt](https: //developer.android.com/images/ui/edittext-noextract.png)
+                                                        例) ```xml <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="氏名を入力してください"/> ``` ### EditText の使い方 - テキストを設定したい場合は `text` 属性で指定する。`EditText` は `TextView` を継承しているので、テキストのカスタマイズは `TextView` と同様のものが使える。 - 入力されたテキストを取得する場合、`EditText#getText()` を使うが、これは `SpannableStringBuilder` インスタンスを返すので単純なテキストにしたい場合は `toString()` する必要がある。<br> 例) ```java EditText editText=(EditText)findViewById(R.id.editext);
+                                                        String text=((SpannableStringBuilder)editText.getText()).toString();
+                                                        ``` - EditText の入力値の変更を検知するには「TextWatcher」を使う。TextWatcher のイベントハンドラは下記の通り。<br>```text beforeTextChanged():テキストが変更される直前で呼ばれる。 afterTextChanged():テキストが変更された直後で呼ばれる。 onTextChanged():テキストの変更中に呼ばれる。※ これと afterTextChanged() のタイミングの差がわからない・・・ ``` 例) ```java EditText editText=(EditText)findViewById(R.id.editext);
+                                                        editText.addTextChangedListener(new TextWatcher() {
+                                                            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                                                            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                                                            @Override public void afterTextChanged(Editable s) {
+                                                                Log.d("#", "文字数=" + s.length());
+                                                            }
+                                                        }
+
+                                                        );
+                                                        ``` - キーボードの決定ボタンクリックを検知するには「`TextView.OnEditorActionListener`」を使う。 ### 主要属性 |属性|説明| |:-----------|:------------| |TextView の主要属性|※ TextView 参照| |hint|入力ヒント| |inputType|入力タイプ(ここで指定した入力タイプのキーボードが表示される)| |imeOptions|キーボードの決定ボタンの種類| [EditText で使える属性](https: //developer.android.com/reference/android/widget/EditText.html#inhattrs)
+                                                        ### リファレンス [Text Fields | Developers](https: //developer.android.com/guide/topics/ui/controls/text.html)
+                                                        </body> </html>
