@@ -54,58 +54,129 @@
 </pre>
     <pre>
 <code>
-            <!-- test.xml -->
-            <org.sample.Kira2TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="あいうえお" /> ```
+<!-- test.xml -->
+<org.sample.Kira2TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="あいうえお" />
+<img src="img/kira2view.png" width="300" />
+</code>
+</pre>
 
-            <img src="img/kira2view.png" width="300" />
-          </code>
-          </pre>
-          パターン2の例「StarsView」
-
+<h3>パターン2の例「StarsView」</h3>
+<pre>
+  <code>
     <!-- startsview.xml -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal">
-
-        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
-
-        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
-
-        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@android:drawable/star_big_on" />
     </LinearLayout>
+  </code>
+</pre>
+// StarsView.java
+<pre>
+  <code>
+public class StarsView extends FrameLayout {
+  public StarsView(Context context, AttributeSet attrs) {
+    super(context, attrs);
+    LayoutInflater.from(context).inflate(R.layout.startsview, this);
+  }
+}
+</code>
+</pre>
+<pre>
+  <code>
+<!-- test.xml -->
+<org.sample.StarsView android:layout_width="wrap_content" android:layout_height="wrap_content" />
+<img src="img/starsview.png" width="200" />
+</code>
+</pre>
 
-    // StarsView.java public class StarsView extends FrameLayout { public StarsView(Context context, AttributeSet attrs) { super(context, attrs); LayoutInflater.from(context).inflate(R.layout.startsview, this); } } ``` ```xml
-    <!-- test.xml -->
-    <org.sample.StarsView android:layout_width="wrap_content" android:layout_height="wrap_content" /> ```
+<h3>パターン3の例「LineGraphView」</h3>
+// LineGraphView.java
+<pre>
+  <code>
+public class LineGraphView extends View {
+  private int[][] mPoints;
+  public LineGraphView(Context context, AttributeSet attrs) {
+    super(context,attrs); }
+    @Override
+    protected void onDraw(Canvas canvas) {
+      super.onDraw(canvas);
+      if (mPoints == null) {
+        return;
+      }
+      Paint paint = new Paint();
+      paint.setStrokeWidth(10);
+      paint.setColor(Color.rgb(0, 0x80, 0x80));
+      paint.setStyle(Paint.Style.FILL);
+      for (int i = 0; i< mPoints.length - 1; i++) {
+        int[] p1=m Points[i];
+        int[] p2=m Points[i + 1];
+        canvas.drawLine(p1[0], p1[1], p2[0], p2[1], paint);
+        canvas.drawCircle(p1[0], p1[1], 20, paint);
+      }
+    }
 
-    <img src="img/starsview.png" width="200" /> パターン3の例「LineGraphView」 // LineGraphView.java public class LineGraphView extends View { private int[][] mPoints; public LineGraphView(Context context, AttributeSet attrs) { super(context,attrs); } @Override
-    protected void onDraw(Canvas canvas) { super.onDraw(canvas); if (mPoints == null) { return; } Paint paint = new Paint(); paint.setStrokeWidth(10); paint.setColor(Color.rgb(0, 0x80, 0x80)); paint.setStyle(Paint.Style.FILL); for (int i = 0; i
-    < mPoints.length
-        - 1; i++) { int[] p1=m Points[i]; int[] p2=m Points[i + 1]; canvas.drawLine(p1[0], p1[1], p2[0], p2[1], paint); canvas.drawCircle(p1[0], p1[1], 20, paint); } } public void setPoints(int[][] points) { mPoints=p oints; invalidate(); } } // TestActivity.java
-        int[][] points={ { 50, 50 }, { 200, 400 }, { 300, 200 }, { 400, 500 }}; LineGraphView graph=( LineGraphView)findViewById(R.id.graph); graph.setPoints(points); <!-- test.xml -->
-        <org.sample.LineGraphView android:id="@+id/graph" android:layout_width="300dp" android:layout_height="200dp" android:background="#eee" /> ```
+    public void setPoints(int[][] points) {
+      mPoints=p oints;
+      invalidate();
+  }
+}
+</code>
+</pre>
+// TestActivity.java
+<pre>
+  <code>
+int[][] points={ { 50, 50 }, { 200, 400 }, { 300, 200 }, { 400, 500 }};
+LineGraphView graph=( LineGraphView)findViewById(R.id.graph);
+graph.setPoints(points);
+</code>
+</pre>
+<pre>
+  <code>
+<!-- test.xml -->
+<org.sample.LineGraphView android:id="@+id/graph" android:layout_width="300dp" android:layout_height="200dp" android:background="#eee" />
+<img src="img/linegraphview.png" width="300" />
+</code>
+</pre>
 
-        <img src="img/linegraphview.png" width="300" /> ### リファレンス - [Creating a View Class | Android Developers](http://developer.android.com/intl/ja/training/custom-views/create-view.html) ◆ カスタム属性の定義の仕方は ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・カスタム属性は
-        values 内に attrs.xml という名前で定義するのが一般的。 ・attrs.xml では
-        <declare-styleable> と
-            <attr> の要素を使って属性を定義する。
-                <declare-styleable>
-                    … 属性をまとめる要素。(1つのカスタムビューの属性はこの中にまとめて定義される)。
-                    <attr>
-                        … 属性を定義する要素。 ・次のように定義する。 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-                        <reasources>
-                            <declare-styleable name="カスタムビューのクラス名(※1)">
-                                <attr name="属性名" format="属性値の型" />
-                                <attr name="属性名" format="属性値の型" />
-                                <attr name="属性名">
-                                    <enum name="選択肢1" value="値" />
-                                    <enum name="選択肢2" value="値" />
-                                </attr>
-                                ...
-                            </declare-styleable>
-                            </resources>
+<h1>リファレンス</h1>
+[Creating a View Class | Android Developers](http://developer.android.com/intl/ja/training/custom-views/create-view.html) ◆ カスタム属性の定義の仕方は
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+・カスタム属性は
+values 内に attrs.xml という名前で定義するのが一般的。
+・attrs.xml では
+<declare-styleable> と
+    <attr> の要素を使って属性を定義する。
+<declare-styleable>
+  … 属性をまとめる要素。(1つのカスタムビューの属性はこの中にまとめて定義される)。
+    <attr>
+… 属性を定義する要素。
+・次のように定義する。
+<pre>
+  <code>
+<reasources>
+    <declare-styleable name="カスタムビューのクラス名(※1)">
+        <attr name="属性名" format="属性値の型" />
+        <attr name="属性名" format="属性値の型" />
+        <attr name="属性名">
+            <enum name="選択肢1" value="値" />
+            <enum name="選択肢2" value="値" />
+                </attr>
+                ...
+            </declare-styleable>
+            </resources>
+</pre>
+</code>
+【format属性】 string 文字列 integer 整数 float 小数 boolean true または false colorカラー dimension ディメンション reference 参照 ※「|」で区切って複数指定することもできっぽい。
 
-                            【format属性】 string 文字列 integer 整数 float 小数 boolean true または false color カラー dimension ディメンション reference 参照 ※「|」で区切って複数指定することもできるっぽい。 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～ (※1) 実際はカスタムビューのクラス名じゃなくても動くが Android のソースも Developers もクラス名にしているからそれに倣った方がいい。 ◆ 同じ名前の属性を複数のカスタムビューで使用したい場合はどうする？
-                            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ・同じ名前を持つ属性を declare-styleable が違っても複数定義することはできない。 定義すると「error: Attribute "deco" has already been defined」のようにビルドエラーになる。 例) deco 属性を2重で定義しビルドエラーになる例 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
-                            <resources>
+(※1) 実際カスタムビューのクラス名じゃなくても動くが Android のソースも Developers もクラス名にしいるからそれに倣った方がいい。 ◆ 同じ名前の属性を複数のカスタムビューで使用したい場合はうする？<br>
+
+・同じ名前を持つ属性を declare-styleable が違っも複数定義することはできない。</br>
+ 定義すると「error: Attribute "deco" has already beendefined」のようにビルドエラーになる。
+ 例) deco 属性を2重で定義しビルドエラーになる例
+ <pre>
+   <code>
+ <resources>
                                 <!-- DecoButtonの属性定義 -->
                                 <declare-styleable name="DecoButton">
                                     <attr name="deco" format="string">
@@ -273,4 +344,6 @@
                                                         );
                                                         ``` - キーボードの決定ボタンクリックを検知するには「`TextView.OnEditorActionListener`」を使う。 ### 主要属性 |属性|説明| |:-----------|:------------| |TextView の主要属性|※ TextView 参照| |hint|入力ヒント| |inputType|入力タイプ(ここで指定した入力タイプのキーボードが表示される)| |imeOptions|キーボードの決定ボタンの種類| [EditText で使える属性](https: //developer.android.com/reference/android/widget/EditText.html#inhattrs)
                                                         ### リファレンス [Text Fields | Developers](https: //developer.android.com/guide/topics/ui/controls/text.html)
-                                                        </body> </html>
+
+</body>
+</html>
