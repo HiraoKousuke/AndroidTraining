@@ -1,10 +1,215 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
+    <title>layout</title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+<div class="container">
+<body>
+    <h3 id="linearlayout-">LinearLayout とは</h3>
+    <ul>
+        <li>縦または横にビューを並べるレイアウト。</li>
+    </ul>
+    <p>例) 横にならべる</p>
+    <pre><code class="lang-java">　LinearLayout
+     android:layout_width=　match_parent　
+     android:layout_height=　100dp　
+     android:background=　#cee　　
 
-  </body>
+     　Button
+         android:layout_width=　wrap_content　
+         android:layout_height=　wrap_content　
+         android:text=　A　/　
+     　Button
+         android:layout_width=　wrap_content　
+         android:layout_height=　wrap_content　
+         android:text=　B　/　
+     　Button
+         android:layout_width=　wrap_content　
+         android:layout_height=　wrap_content　
+         android:text=　C　/　
+ 　/LinearLayout　
+ </code></pre>
+    <h3 id="linearlayout-">LinearLayout の主要属性</h3>
+     <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">値</th>
+                <th style="text-align:left">説明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">orientation</td>
+                <td style="text-align:left">vertical, orientation</td>
+                <td style="text-align:left">並べる向き</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">weigtSum</td>
+                <td style="text-align:left">数値</td>
+                <td style="text-align:left">隙間を埋める割合の合計</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">baselineAligned</td>
+                <td style="text-align:left">true/false</td>
+                <td style="text-align:left">並べたビューの文字のベースラインを合わせて表示するか。</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3 id="linearlayout-layoutparams-">LinearLayout.LayoutParams の主要属性</h3>
+     <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">値</th>
+                <th style="text-align:left">説明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">layout_gravity</td>
+                <td style="text-align:left">top, bottom など</td>
+                <td style="text-align:left">親に対して配置する位置</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">layout_weight</td>
+                <td style="text-align:left">数値</td>
+                <td style="text-align:left">並べる向きに隙間ができた場合にその <strong>隙間を</strong> 埋める割合。<br>layout_weight は隙間があって初めて有効になるので、<br>この属性を指定するビューは <strong>layout_width に 0dp を指定する</strong>。</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><br> 例) layout_weight を指定</p>
+    <pre><code class="lang-java">　LinearLayout
+     android:layout_width=　match_parent　
+     android:layout_height=　100dp　
+     android:background=　#cee　
+     android:visibility=　gone　　
+
+     　Button
+         android:layout_width=　0dp　
+         android:layout_height=　wrap_content　
+         android:layout_weight=　1　
+         android:text=　A　/　
+     　Button
+         android:layout_width=　0dp　
+         android:layout_height=　wrap_content　
+         android:layout_weight=　2　
+         android:text=　B　/　
+     　Button
+         android:layout_width=　0dp　
+         android:layout_height=　wrap_content　
+         android:layout_weight=　3　
+         android:text=　C　/　
+
+ 　/LinearLayout　
+ </code></pre>
+    <h3 id="linearlayout-">LinearLayout とは</h3></p>
+    <p>
+        <ul>
+    </p>
+    <p>
+        <li>縦または横にビューを並べるレイアウト。</li>
+        </ul>
+    </p>
+    <p>例) 横にならべる</p>
+    <pre><code class="lang-java">　LinearLayout
+    android:layout_width=　match_parent　
+    android:layout_height=　100dp　
+    android:background=　#cee　　
+
+    　Button
+        android:layout_width=　wrap_content　
+        android:layout_height=　wrap_content　
+        android:text=　A　/　
+    　Button
+        android:layout_width=　wrap_content　
+        android:layout_height=　wrap_content　
+        android:text=　B　/　
+    　Button
+        android:layout_width=　wrap_content　
+        android:layout_height=　wrap_content　
+        android:text=　C　/　
+　/LinearLayout　
+</code></pre>
+    <h3 id="linearlayout-">LinearLayout の主要属性</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">値</th>
+                <th style="text-align:left">説明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">orientation</td>
+                <td style="text-align:left">vertical, orientation</td>
+                <td style="text-align:left">並べる向き</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">weigtSum</td>
+                <td style="text-align:left">数値</td>
+                <td style="text-align:left">隙間を埋める割合の合計</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">baselineAligned</td>
+                <td style="text-align:left">true/false</td>
+                <td style="text-align:left">並べたビューの文字のベースラインを合わせて表示するか。</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3 id="linearlayout-layoutparams-">LinearLayout.LayoutParams の主要属性</h3>
+     <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">値</th>
+                <th style="text-align:left">説明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">layout_gravity</td>
+                <td style="text-align:left">top, bottom など</td>
+                <td style="text-align:left">親に対して配置する位置</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">layout_weight</td>
+                <td style="text-align:left">数値</td>
+                <td style="text-align:left">並べる向きに隙間ができた場合にその <strong>隙間を</strong> 埋める割合。<br>layout_weight は隙間があって初めて有効になるので、<br>この属性を指定するビューは <strong>layout_width に 0dp を指定する</strong>。</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><br> 例) layout_weight を指定</p>
+    <pre><code class="lang-java">　LinearLayout
+    android:layout_width=　match_parent　
+    android:layout_height=　100dp　
+    android:background=　#cee　
+    android:visibility=　gone　　
+
+    　Button
+        android:layout_width=　0dp　
+        android:layout_height=　wrap_content　
+        android:layout_weight=　1　
+        android:text=　A　/　
+    　Button
+        android:layout_width=　0dp　
+        android:layout_height=　wrap_content　
+        android:layout_weight=　2　
+        android:text=　B　/　
+    　Button
+        android:layout_width=　0dp　
+        android:layout_height=　wrap_content　
+        android:layout_weight=　3　
+        android:text=　C　/　
+
+　/LinearLayout　
+</code></pre>
+</div>
+</body>
+
 </html>

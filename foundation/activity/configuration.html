@@ -4,33 +4,44 @@
 <head>
     <meta charset="utf-8">
     <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <h1>コンフィグレーションとは</h1> コンフィグレーションとはデバイス構成情報やユーザー設定のこと。 具体的には
-    <ul>
-        <li>デバイス構成情報</li>
-        <li>キーボー</li>
-        <li>デバイスの向き</li>
-        <li>SIM検出など</li>
-    </ul>
-
-    <h3>ユーザー設定</h3> フォントサイズ、ロケールなど コンフィグレーションが変更されると アクティビティは再生成される コンフィグレーションが変わったら UI を適切なのに変える必要あるよね的な感じの考えからでしょう。 コンフィグレーションの変更でもアクティビティを再起動させないためには Android マニフェストの<activity>要素の「`android:configChanges`」で構成が変わってもアクティビティを再生成させないように各構成単位で指定できる。 これを設定すると指定した項目の構成が変更された際に下記のメソッドが呼ばれるようになる。 つまり構成変更を通知してあげるから、対処は自分でやってねということ。 @Override public void onConfigurationChanged (Configuration newConfig) 例) デバイスの向きが変わっても再起動させない
-        <activity android:name=".SampleActivity" android:configChanges="orientation|screenLayout" />
-        コンフィグレーション情報をプログラムで取得
-        Configurationクラスはコンフィグレーション情報を表すクラス
-        ResourcesからConfigurationクラスのインスタンスを取得しあとはフィールドで情報を持っているのでそれを取得するだけ。
-        例) Configuration configuration = getResources().getConfiguration();
-        Log.d("#", "fontScale="
-        + configuration.fontScale); // フォントサイズ Log.d("#", "densityDpi=" + configuration.densityDpi);
-        // 画面密度
-        Log.d("#", "locale=" + configuration.locale);
-        // ロケール
-        Log.d("#", "orientation=" + configuration.orientation);
-        // 画面向き Log.d("#", "screenLayout="
-        + configuration.screenLayout);
-        // 画面レイアウト Log.d("#", "smallestScreenWidthDp=" + configuration.smallestScreenWidthDp);
-        // 最小画面幅 
+    <div class="container">
+        <h3 id="-">コンフィグレーションとは</h3>
+        <ul>
+            <li>コンフィグレーションとはデバイス構成情報やユーザー設定のこと。具体的には
+                <ul>
+                    <li><strong>デバイス構成情報</strong><br> キーボード、デバイスの向き、SIM検出など
+                    </li>
+                    <li><strong>ユーザー設定</strong><br> フォントサイズ、ロケールなど
+                    </li>
+                </ul>
+            </li>
+            <li>コンフィグレーションが変更されると <strong>アクティビティは再生成される</strong>。
+            </li>
+        </ul>
+        <h3>コンフィグレーションの変更でもアクティビティを再起動させないためには</h3>
+        <p>　Android マニフェストの
+            <code　activity&gt;</code> 要素の「<code>android:configChanges</code>」で構成が変わってもアクティビティを再生成させないように各構成単位で指定できる。 これを設定すると指定した項目の構成が変更された際に下記のメソッドが呼ばれるようになる。 つまり構成変更を通知してあげるから、対処は自分でやってねということ。
+        </p>
+        <pre><code class="lang-java">@Override
+public void onConfigurationChanged (Configuration newConfig)
+</code></pre>
+        <p>例) デバイスの向きが変わっても再起動させない</p>
+        <pre><code class="lang-java">activity
+android:name=.SampleActivity　
+android:configChanges=orientation|screenLayout;
+</code></pre>
+        <h3 id="-">コンフィグレーション情報をプログラムで取得</h3>
+        <ul>
+            <li><code>Configuration</code> クラスはコンフィグレーション情報を表すクラス。</li>
+            <li><code>Resources</code> から <code>Configuration</code> クラスのインスタンスを取得しあとはフィールドで情報を持っているのでそれを取得するだけ。</li>
+        </ul>
+    </div>
 </body>
 
 </html>

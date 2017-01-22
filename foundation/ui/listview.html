@@ -1,10 +1,54 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title></title>
-  </head>
-  <body>
+</head>
 
-  </body>
+<body>
+    <h3 id="-">リストビューとは</h3>
+    <ul>
+        <li>同じ形式の情報をリスト形式で表示するビュー。</li>
+    </ul>
+    <p>例)</p>
+    <pre>
+      <code class="lang-xml">
+        ListView
+          android:layout_width=match_parent;
+          android:layout_height=match_parent/>
+      </code>
+    </pre>
+    <h3>登場人物と役割</h3>
+    <h5>ListView</h5>
+    <ul>
+        <li>項目ビューの「<strong>作成依頼</strong>」「<strong>表示</strong>」「<strong>破棄/再利用</strong>」を管理する。
+            <ul>
+                <li>表示に必要な項目ビューの作成を Adapter に依頼し、Adapter からビューを受け取ったら表示。</li>
+                <li>表示に不要になった項目ビューを <strong>再利用領域に退避</strong>。次に作成依頼するときに <strong>Adapter に渡す</strong>。</li>
+            </ul>
+        </li>
+    </ul>
+    <h5 id="-font-color-teal-adapter-font-"><font color="teal">アダプタ（Adapter）</font></h5>
+    <ul>
+        <li>ListView からの依頼に対し項目ビューを作成して返す。
+            <ul>
+                <li>項目ビューを作成できるために、「項目レイアウト」「リストデータ」を保持する。</li>
+            </ul>
+        </li>
+    </ul>
+    <h5 id="-font-color-teal-font-"><font color="teal">項目レイアウト</font></h5>
+    <ul>
+        <li>1行分のレイアウトファイル</li>
+    </ul>
+    <h5 id="-font-color-teal-font-"><font color="teal">項目ビュー</font></h5>
+    <ul>
+        <li>1行分のビューのインスタンス</li>
+    </ul>
+    <h5 id="-font-color-teal-font-"><font color="teal">リストデータ</font></h5>
+    <ul>
+        <li>リストに表示する全ての行のデータ。</li>
+    </ul>
+</body>
+
 </html>

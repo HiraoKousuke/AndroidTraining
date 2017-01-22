@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h3 id="http-">HTTP クライアントとは</h3>
+        <ul>
+            <li>「<strong><font color="teal">HTTP Client</font></strong>」とは、Web サーバーに HTTP リクエストを送り、HTTP レスポンスを受け取るプログラムのこと。<pre><code class="lang-text">( HTTP Client ) ━━━━━━━━━▶ ( Web サーバー )
+               ◀︎━━━━━━━━━
+</code></pre>
+            </li>
+            <li>Android は 3 つの HTTP Client を搭載している。
+                <ol>
+                    <li><strong><font color="teal">HttpURLConnection</font></strong><br> Java 標準の HTTP Client</li>
+                    <li><strong><font color="teal">DefaultHttpClient</font></strong> （API level 23 で削除）<br> Apache Jakarta Project(オープンソース開発プロジェクト)で作られた HTTP Client のライブラリ「Apache HTTP Client」のクラス。</li>
+                    <li><strong><font color="teal">AndroidHttpClient</font></strong>（API level 23 で削除）<br> Apache HTTP Client を Android が改良したもの。</li>
+                </ol>
+            </li>
+            <li>削除されたことを考えると、標準の HTTP Client でつかえるものは HttpUrlConnection の 1 つ。</li>
+        </ul>
+        <blockquote>
+            <p><small>Google は Apach HTTP Client のメンテを諦めてAndroid 5.1(API level 22)で非推奨とした。そして、Android 6.0(API level 23)でそのコードは削除されている。<br>
+そのため、これからは標準の HTTP Client としては「HttpURLConnection」一択となる。<br>
+※6系端末で targetSdkVersion=23 もしくは指定無しだと AndroidHttpClient のクラスは無くなったことになるのでアプリは動かない。
+</small></p>
+        </blockquote>
+        <h3 id="android-http-">Android で HTTP 通信する際の注意点</h3>
+        <ol>
+            <li>HTTP 通信は UI スレッドではなく、<strong>ワーカースレッドで実行することが強制</strong> されている。もし UI スレッドで通信しようとすると <strong>例外が発生</strong> する。<br> → <code>AsyncTask</code> や <code>Thread</code> などの非同期処理を使う必要がある。</li>
+            <li>HTTP 通信には <strong>許可（android.permission.INTERNET）が必要</strong><br> → AndroidManifest に許可を追加。</li>
+        </ol>
+        <h3 id="httpurlconnection-">HttpURLConnection で通信</h3>
+        <h4 id="-">手順</h4>
+        <ol>
+            <li><code>HttpURLConnection</code> インスタンスを生成し、HTTPヘッダー情報を設定。</li>
+            <li><code>HttpURLConnection#connect()</code> でリクエストの実行</li>
+            <li><code>HttpURLConnection#getResponseCode()</code> で HTTP 通信が成功(200番)かチェック</li>
+            <li>通信が成功ならデータを入力ストリームから読み込み。</li>
+        </ol>
+        <p>例) Yahoo! RSS をダウンロードし TextView に表示</p>
+        <pre><code class="lang-java">// SampleActivity.java
+
+private String downloadContent(String contentUrl) {
+    InputStreamReader in = null;
+    try {
+        // 1.HttpURLConnectionの生成とヘッダー設定
+        URL url = new URL(contentUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod(GET);
+
+        // 2.リクエストの実行
+        conn.connect();
+
+        // 3.レスポンスコードのチェック
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            return null;
+        }
+
+        // 4.レスポンスからデータの取得
+        int len;
+        char[] buff = new char[10];
+        StringBuilder data = new StringBuilder();
+
+        in = new InputStreamReader(conn.getInputStream());
+        while ((len = in.read(buff)) != -1) {
+            data.append(buff, 0, len);
+        }
+
+        return data.toString();
+
+    } catch (IOException e) {
+        Log.e(#, e.getMessage(), e);
+        return null;
+    } finally {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+}
+...
+final TextView textView = (TextView)findViewById(R.id.http_textview);
+AsyncTask&lt;String, Void, String&gt; task = new AsyncTask&lt;String, Void, String&gt;() {
+    @Override
+    protected String doInBackground(String... params) {
+        return downloadContent(params[0]);
+    }
+    @Override
+    protected void onPostExecute(String result) {
+        textView.setText(result == null ? エラー : result);
+    }
+};
+task.execute(http://news.yahoo.co.jp/pickup/domestic/rss.xml);
+</code></pre>
+        <h3 id="-">通信ライブラリいろいろ</h3>
+        <ul>
+            <li>実践では HTTP 通信を行うのに <code>HttpURLConnection</code> をそのまま使うことはあまりなく、使い勝手のよく機能も充実しているライブラリを使用する。</li>
+            <li>その中でも主要なライブラリは「OkHttp」「Retrofit」「Volley」などがある。単純に通信するだけなら <strong>OkHttp がデフェクトスタンダード</strong> といってもいい。</li>
+        </ul>
+        <h4 id="-font-color-teal-okhttp-font-square-"><font color="teal">OkHttp</font> (Square社)</h4>
+        <ul>
+            <li>Java/Android 用のライブラリ。シンプルで使い易い。</li>
+            <li>Java でも使えるようになっているので、AsyncTask のようにコールバックが勝手に UI スレッドで実行されるみたいなことはなく、コールバックもワーカースレッド上で処理される。</li>
+            <li>Android でコールバック処理を UI スレッドで行わせたければ、自分で MainLooper に処理を <code>Handler#post()</code> する必要がある。</li>
+        </ul>
+        <h5 id="-">リファレンス</h5>
+        <ul>
+            <li><a href="http://square.github.io/okhttp/">OkHttp</a></li>
+            <li><a href="http://qiita.com/ryugoo/items/478ba23cda0f57bd21e8">OkHttp 2.0 を使ってみた</a></li>
+        </ul>
+        <h4 id="-font-color-teal-retrofit-font-square-"><font color="teal">Retrofit</font> (Square社)</h4>
+        <ul>
+            <li>アノテーションを駆使して華麗に HTTP リクエストを記述ができる。</li>
+            <li>アノテーション使うので慣れるまでわかりにくい。</li>
+            <li>RxJava と組み合わせて「リアクティブプログラミング」の形で今風の通信コード記述もできる。</li>
+            <li>内部で使っている HTTP Client を OkHttp に変えることができる。</li>
+        </ul>
+        <h5 id="-">リファレンス</h5>
+        <ul>
+            <li><a href="https://github.com/square/retrofit">square/retrofit</a></li>
+            <li><a href="http://square.github.io/retrofit/">Retrofit</a></li>
+        </ul>
+        <h4 id="-font-color-teal-volley-font-google-"><font color="teal">Volley</font> (Google社)</h4>
+        <ul>
+            <li>Google I/O 2013 で発表されたライブラリ。YouTube もこれを使っているとかいないとか。</li>
+            <li>キューとか、リトライとか、データバインドとか多機能かつカスタマイズ性が高い。コールバックも UI スレッド！</li>
+        </ul>
+        <h5 id="-">リファレンス</h5>
+        <ul>
+            <li><a href="http://techbooster.org/android/hacks/16474/">ネットワーク通信用ライブラリVolleyを使いこなす</a></li>
+        </ul>
+        <blockquote>
+            <p><small>※ Volley は Gingerbread(API level 9)以上では HttpURLConnection、9未満では AndroidHttpClient を使うようになっているので注意。
+<a href="https://developer.android.com/training/volley/requestqueue.html">https://developer.android.com/training/volley/requestqueue.html</a>
+</small></p>
+        </blockquote>
+        <p><br></p>
+        <h3 id="-">リファレンス</h3>
+        <ul>
+            <li><a href="https://developer.android.com/training/basics/network-ops/connecting.html#download">Connect and Download Data</a></li>
+            <li><a href="http://techlife.cookpad.com/entry/2015/06/25/093507">Android版クックパッドアプリで採用している技術の現状確認 2015年版</a></li>
+        </ul>
+
+    </div>
+</body>
+
+</html>

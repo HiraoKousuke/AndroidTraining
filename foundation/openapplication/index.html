@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h3 id="-">署名</h3>
+        <ul>
+            <li>Android ではアプリが不正なものではない事を証明するためにアプリへの <strong>証明証での署名が必須</strong> となっている。</li>
+            <li>アプリは証明書が変わると不正なアプリと扱われるため、同じアプリであれば <strong>常に同じ証明書で署名</strong> する必要があります
+            </li>
+            <li>apk に署名する証明書は認証局は不要で、<strong>自己証明書</strong>（オレオレ証明書）でよい。</li>
+            <li>Android の証明書は内部ストレージへのアクセスや、アプリインストール時にアプリごとに振られるユーザーIDの妥当性のチェックのために証明書を使っている。
+                <blockquote>
+                    アプリA(証明書1)がインストール済みの状態で、アプリA(証明書2)をインストールしようとすると入っているアプリA(証明書1)が消された後に、アプリA(証明書2)が入る。内部ストレージもクリアされている。
+                </blockquote>
+            </li>
+            <li>証明書の作成と apk への署名は次の２通りで行うことができる。
+                <ol>
+                    <li><strong>Android Studio のウィザードを使う</strong></li>
+                    <li><strong>jdk の keytool、jarsigner コマンドを使う</strong>
+                        <blockquote>
+                            keytool が証明書生成、証明書を管理するキーストア操作を行うコマンド。jarsigner は証明書を jar/apk に署名するコマンド。
+                        </blockquote>
+                    </li>
+                </ol>
+            </li>
+        </ul>
+        <h3 id="-apk-">ウィザードを使って apk に署名</h3>
+        <ul>
+            <li>
+                <p>Studio のメニューで「Build &gt; Generate signed APK...」でウィザードが開始できる。あとは入力していくだけ。<br>
+                    <small><strong>Step1.キーストアと証明書作成</strong></small><br>
+                    <small><strong>Step2.署名につかう証明書の選択</strong></small><br>
+                    <small><strong>Step3.APK の出力先選択</strong></small><br>
+                    <small><strong>Step4. 生成ファイル</strong></small><br>
+            </li>
+            <li>
+                <p>生成された apk の署名されていることを jarsigner コマンドで確認できる。<br> 例)
+                </p>
+                <pre><code class="lang-bash">$ jarsigner -verify -verbose -certs ~/Desktop/tmp/app-release.apk
+　
+sm     19452 Sun Jul 24 12:47:18 JST 2016 AndroidManifest.xml
+　
+    X.509, CN=Ando Taro, OU=android, O=Sample.inc, L=kotoku, ST=Tokyo, C=JP
+    [証明書は16/07/24 12:46から41/07/18 12:46まで有効です]
+    [CertPathが検証されていません: Path does not chain with any of the trust anchors]
+...
+</code></pre>
+            </li>
+        </ul>
+        <h3 id="-">デバッグビルドでの証明書</h3>
+        <ul>
+            <li>デバッグビルドする際に <strong>暗黙的に証明書によって署名</strong> された apk が生成されている。</li>
+            <li>その際に使われるキーストアは <strong>debug.keystore</strong> というキーストアで下記の場所に置かれている。<pre><code class="lang-text">~/.android/debug.keystore
+</code></pre>
+            </li>
+            <li>署名に使われる証明書の中身は下記。<pre><code class="lang-text">キーストアのパスワード – 「android」
+キーのエイリアス – 「androiddebugkey」
+キーのパスワード – 「android」
+CN – 「CN=Android Debug,O=Android,C=US」
+</code></pre>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>

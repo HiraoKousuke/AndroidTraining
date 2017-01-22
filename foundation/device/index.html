@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h3 id="-">画面サイズについて</h3>
+        <ul>
+            <li>テレビのサイズと同じ <strong>画面の対角線の長さ</strong> のこと。単位は <strong>インチ</strong>。</li>
+            <li>Android では画面サイズを次の4グループに分けている。</li>
+        </ul>
+        <p>表.画面サイズグループ</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="text-align:left">グループ</th>
+                    <th style="text-align:left">インチ数</th>
+                    <th style="text-align:left">dp数</th>
+                    <th style="text-align:left">代替リソースの識別子</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:left">SMALL</td>
+                    <td style="text-align:left">約2インチ</td>
+                    <td style="text-align:left">320x426dp 以上</td>
+                    <td style="text-align:left">small</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">NORMAL</td>
+                    <td style="text-align:left">約4インチ</td>
+                    <td style="text-align:left">320x470dp 以上</td>
+                    <td style="text-align:left">normal</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">LARGE</td>
+                    <td style="text-align:left">約6インチ</td>
+                    <td style="text-align:left">480x640dp 以上</td>
+                    <td style="text-align:left">large</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">XLARGE</td>
+                    <td style="text-align:left">約9インチ</td>
+                    <td style="text-align:left">720x960dp 以上</td>
+                    <td style="text-align:left">xlarge</td>
+                </tr>
+            </tbody>
+        </table>
+        <h3 id="-">画面サイズグループの取得</h3>
+        <ul>
+            <li>画面サイズはコンフィグレーション情報で、その情報を格納するクラスが「<code>Configuration</code>」。</li>
+            <li><code>Configuration</code> クラスの <code>int</code> 型のインスタンス変数「<code>screenLayout</code>」に画面サイズなどの画面レイアウトなどが各ビットごとに情報が格納されていて、ビットマスクをすることによりその情報が取り出せる。</li>
+        </ul>
+        <p>例)</p>
+        <pre><code class="lang-java">Configuration configuraion = getResources().getConfiguration();
+
+// ビットマスクで画面サイズ値を取り出し
+int screenLayoutSize = configuration.screenLayout &amp; Configuration.SCREENLAYOUT_SIZE_MASK;
+if (screenLayoutSize == Configuration.SCREENLAYOUT_SIZE_SMALL) {
+    // 約2インチ
+} else if (screenLayoutSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+    // 約4インチ
+}
+</code></pre>
+        <h3 id="-">画面密度とは</h3>
+        <ul>
+            <li>単位長さ当たり(例えば1インチ)にどれだけピクセルが詰まっているかを表すもの。</li>
+            <li>画面密度の単位は『<strong>dpi</strong> : dots per inch』を使い、1インチあたりのピクセル数を表す。</li>
+            <li>Android では画面密度を 7 つのグループに分けている。</li>
+        </ul>
+        <p>表.画面密度グループ</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="text-align:left">グループ</th>
+                    <th style="text-align:left">dpi値(倍率)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:left">ldpi (low)</td>
+                    <td style="text-align:left">120dpi (x0.75)</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">mdpi (medium)</td>
+                    <td style="text-align:left">160dpi (x1)</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">tvdpi (tv)</td>
+                    <td style="text-align:left">213dpi (x1.33)</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">hdpi (high)</td>
+                    <td style="text-align:left">240dpi (x1.5)</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">xhdpi (extra high)</td>
+                    <td style="text-align:left">320dpi (x2)</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">xxhdpi (extra extra hight)</td>
+                    <td style="text-align:left">480dpi (x3)</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">xxxhdpi (extra extra extra high)</td>
+                    <td style="text-align:left">640dpi (x4)</td>
+                </tr>
+            </tbody>
+        </table>
+        <blockquote>
+            <p><small><br>
+※1) dpi値は基準となる数値で実際の端末がこの値と多少ずれてても近いグループに分類されます。<br>
+※2) 倍率は 160dpi を基準の1倍としたもの。</p>
+</blockquote>
+<h3 id="-">画面密度の取得</h3>
+<ul>
+<li>画面密度は <code>Display#setMetrics()</code> を使って取得できる画面情報(<code>DisplayMetrics</code> クラス)のフィールドから取得します。</li>
+</ul>
+<p>例) NEXUS5 (1080x1920) の画面情報を出力</p>
+<pre><code class="lang-java">DisplayMetrics displayMetrics = new DisplayMetrics();
+getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+Log.d(#, density= + displayMetrics.density);        // 倍率(論理値)
+Log.d(#, densityDpi= + displayMetrics.densityDpi);    // dpi値
+Log.d(#, scaledDensity= + displayMetrics.scaledDensity);    // 倍率
+Log.d(#, widthPixels= + displayMetrics.widthPixels);    // 画面の横幅ピクセル
+Log.d(#, heightPixels= + displayMetrics.heightPixels);    // 画面の縦幅ピクセル
+Log.d(#, xdpi= + displayMetrics.xdpi);    // x軸の正確なdpi値
+Log.d(#, ydpi= + displayMetrics.ydpi);    // y軸の正確なdpi値
+</code></pre>
+<pre><code class="lang-text">// LogCat
+
+#: density=3.0
+#: densityDpi=480
+#: scaledDensity=3.0
+#: widthPixels=1080
+#: heightPixels=1776    ※ナビゲーションバー部分が引かれている
+#: xdpi=480.0
+#: ydpi=480.0
+</code></pre>
+<p><h3 id="-">画面密度とは</h3></p>
+<p><ul></p>
+<p><li>単位長さ当たり(例えば1インチ)にどれだけピクセルが詰まっているかを表すもの。</li></p>
+<p><li>画面密度の単位は『<strong>dpi</strong> : dots per inch』を使い、1インチあたりのピクセル数を表す。</li></p>
+<p><li>Android では画面密度を 7 つのグループに分けている。</li>
+</ul></p>
+<p><p>表.画面密度グループ</p></p>
+<p><table class="table table-bordered"></p>
+<p><thead></p>
+<p><tr></p>
+<p><th style="text-align:left">グループ</th></p>
+<p><th style="text-align:left">dpi値(倍率)</th>
+</tr>
+</thead></p>
+<p><tbody></p>
+<p><tr></p>
+<p><td style="text-align:left">ldpi (low)</td></p>
+<p><td style="text-align:left">120dpi (x0.75)</td>
+</tr></p>
+<p><tr></p>
+<p><td style="text-align:left">mdpi (medium)</td></p>
+<p><td style="text-align:left">160dpi (x1)</td>
+</tr></p>
+<p><tr></p>
+<p><td style="text-align:left">tvdpi (tv)</td></p>
+<p><td style="text-align:left">213dpi (x1.33)</td>
+</tr></p>
+<p><tr></p>
+<p><td style="text-align:left">hdpi (high)</td></p>
+<p><td style="text-align:left">240dpi (x1.5)</td>
+</tr></p>
+<p><tr></p>
+<p><td style="text-align:left">xhdpi (extra high)</td></p>
+<p><td style="text-align:left">320dpi (x2)</td>
+</tr></p>
+<p><tr></p>
+<p><td style="text-align:left">xxhdpi (extra extra hight)</td></p>
+<p><td style="text-align:left">480dpi (x3)</td>
+</tr></p>
+<p><tr></p>
+<p><td style="text-align:left">xxxhdpi (extra extra extra high)</td></p>
+<p><td style="text-align:left">640dpi (x4)</td>
+</tr>
+</tbody>
+</table></p>
+<p><blockquote></p>
+<p><p><small><br>
+※1) dpi値は基準となる数値で実際の端末がこの値と多少ずれてても近いグループに分類されます。<br>
+※2) 倍率は 160dpi を基準の1倍としたもの。</p>
+</blockquote></p>
+<p><h3 id="-">画面密度の取得</h3></p>
+<p><ul></p>
+<p><li>画面密度は <code>Display#setMetrics()</code> を使って取得できる画面情報(<code>DisplayMetrics</code> クラス)のフィールドから取得します。</li>
+</ul></p>
+<p><p>例) NEXUS5 (1080x1920) の画面情報を出力</p></p>
+<pre><code class="lang-java">DisplayMetrics displayMetrics = new DisplayMetrics();
+getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+Log.d(#, density= + displayMetrics.density);        // 倍率(論理値)
+Log.d(#, densityDpi= + displayMetrics.densityDpi);    // dpi値
+Log.d(#, scaledDensity= + displayMetrics.scaledDensity);    // 倍率
+Log.d(#, widthPixels= + displayMetrics.widthPixels);    // 画面の横幅ピクセル
+Log.d(#, heightPixels= + displayMetrics.heightPixels);    // 画面の縦幅ピクセル
+Log.d(#, xdpi= + displayMetrics.xdpi);    // x軸の正確なdpi値
+Log.d(#, ydpi= + displayMetrics.ydpi);    // y軸の正確なdpi値
+</code></pre>
+<pre><code class="lang-text">// LogCat
+
+#: density=3.0
+#: densityDpi=480
+#: scaledDensity=3.0
+#: widthPixels=1080
+#: heightPixels=1776    ※ナビゲーションバー部分が引かれている
+#: xdpi=480.0
+#: ydpi=480.0
+</code></pre>
+<h3 id="-">画面の向きとは</h3>
+<ul>
+<li>端末の向き。Android には画面の向きとして 2 種類ある。</li>
+</ul>
+<table class="table table-bordered">
+<thead>
+<tr>
+<th style="text-align:left">向き</th>
+<th style="text-align:left">説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ポートレイト</td>
+<td style="text-align:left">縦向き(デバイスの短辺を横にした向き)</td>
+</tr>
+<tr>
+<td style="text-align:left">ランドスケープ</td>
+<td style="text-align:left">縦向き(デバイスの短辺を縦にした向き)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>
+説明文は Developers の内容を抜粋。<br><br>
+<blockquote>
+<strong>ORIENTATION_LANDSCAPE</strong><br>
+　　Constant for orientation, value corresponding to the land resource qualifier.<br>
+<strong>ORIENTATION_PORTRAIT</strong><br>
+　　Constant for orientation, value corresponding to the port resource qualifier.<br>
+<strong>ORIENTATION_SQUARE</strong><br>
+　　Not currently supported or used.<br>
+<strong>ORIENTATION_UNDEFINED</strong><br>
+　　Constant for orientation: a value indicating that no value has been set.<br>
+</blockquote></p>
+        </blockquote>
+        <h3 id="-">画面の向きの取得</h3>
+        <ul>
+            <li><code>Configuration#orientation</code> から取得する。</li>
+        </ul>
+        <p>例)</p>
+        <pre><code class="lang-java">Configuration configuraion = getResources().getConfiguration();
+
+int orientation = configuration.orientation;
+if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+    // 横向き
+} else {
+    // 縦向き
+}
+</code></pre>
+        <h3 id="px">px</h3>
+        <ul>
+            <li>画面のピクセル数で指定する単位。</li>
+        </ul>
+        <h3 id="dp-dip-">dp(dip)</h3>
+        <ul>
+            <li>「<strong>dp(dip)</strong>: Density Independent Pixels : 密度非依存ピクセル」。<br> ※ dpi と間違えないように！！</li>
+            <li>dp は「画面密度に依存しないピクセル」のことで、簡単に言えば「<strong>画面密度によらずリアルサイズが同じになる単位</strong>」。<br></li>
+        </ul>
+        <p>例えば、320dpi と 160dpi の画面密度で 10x10px を表示すると次のような表示になる。 (密度が高い方が物が小さくなるというだけ)
+        </p>
+        <pre><code class="lang-text">160dpi の 10px     320dpi の 10px
+◼︎ ◼︎                ◼︎
+◼︎ ◼︎
+</code></pre>
+        <p>一方、dp であれば、解像度によらず以下のように見た目が同じになる</p>
+        <pre><code class="lang-text">160dpi の 10dp     320dpi の 10dp
+◼︎ ◼︎                ◼︎ ◼︎
+◼︎ ◼︎                ◼︎ ◼︎
+</code></pre>
+        <p>160dpi の場合、1dp = 1px<br> 320dpi の場合、1dp = 2px</p>
+        <h3 id="sp">sp</h3>
+        <ul>
+            <li>「<strong>sp</strong> : Scale-independent Pixels: スケール非依存ピクセル」</li>
+            <li>Android の設定メニューにある「フォントサイズ」に依存する。<br> ※ fontSize を px/dp などで指定するとフォントサイズの変更でサイズは変わら無い。</li>
+        </ul>
+        <p><br></p>
+    </div>
+</body>
+
+</html>

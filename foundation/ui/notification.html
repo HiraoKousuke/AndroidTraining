@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <h3 id="-">ノーティフィケーションとは</h3>
+    <ul>
+        <li>「<strong><font color="teal">ステータス通知</font></strong>」ともいい、ステータスバーにアイコンを表示することによってユーザーの注意を引く通知のこと。<br>（以降、ノーティフィケーションのことを 　通知　 と呼ぶ）</li>
+        <li>ステータスバーを下に引っ張ることで通知の一覧が見れる『<strong><font color="teal">通知ドロワー</font></strong>』を表示することができる。</li>
+        <li>通知は <strong>プログラムによって任意のタイミングで作成・削除</strong> ができる。</li>
+        <li>通知ドロワーの <strong>通知タップでインテントを発行</strong> させることができる。</li>
+    </ul>
+    <h3 id="-">登場人物</h3>
+    <ol>
+        <li>
+            <p><strong><font color="teal">Notification クラス</font></strong></p>
+            <ul>
+                <li><strong>通知そのもの</strong> を表し、通知情報を保持する。</li>
+            </ul>
+        </li>
+        <li>
+            <p><strong>Notification.Builder クラス(API level 11)<br>
+<font color="teal">NotificationCompat.Builder クラス (support-v4)</font></strong></p>
+            <ul>
+                <li><strong>通知クラスのビルダー</strong>。最初からあったわけじゃなくて API level 11 から導入。</li>
+                <li>ビルダーはネイティブとサポートライブラリで２つある。サポートライブラリを使った方が、古いバージョンでも通知の新しい機能「３つの展開スタイル、アクション」などが使えるのでこちらの方が良い。</li>
+            </ul>
+        </li>
+        <li>
+            <p><strong>NotificationManager クラス(API level 1)<br>
+<font color="teal">NotificationManagerCompat クラス (support-v4)</font></strong></p>
+            <ul>
+                <li>通知の表示/削除など <strong>通知の管理</strong> を行う。</li>
+            </ul>
+        </li>
+        <li>
+            <p><strong><font color="teal">PendingIntent クラス</font></strong></p>
+            <ul>
+                <li>通知タップ時に発行するインテント。</li>
+            </ul>
+        </li>
+    </ol>
+    <h3 id="-">通知の作成と実行</h3>
+    <h4 id="-">手順</h4>
+    <ol>
+        <li>ビルダーのインスタンスを作る。</li>
+        <li>ビルダーに通知の情報(タイトル、テキスト、スタイル、インテントなど)を設定。</li>
+        <li>マネージャで通知の実行</li>
+    </ol>
+    <h4 id="ponit">Ponit</h4>
+    <ul>
+        <li>通知は <code>notify()</code> の第一引数の <strong>『通知ID』で区別される</strong>。これが同じ値だと同じ通知となり 2 個以上通知しても <strong>上書きになる</strong>。</li>
+    </ul>
+    <p>例) シンプルな通知の実行と通知タップによるアクティビティの起動</p>
+    <pre><code class="lang-java">// SampleActivity.java
+
+// 1.ビルダーの生成
+NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+// 2.ビルダーに通知情報をセット
+builder.setSmallIcon(android.R.drawable.ic_delete);    // 小さいアイコン
+builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_input_add));    // 大きいアイコン
+builder.setContentTitle(　タイトル　);    // タイトル
+builder.setContentText(　テキスト　);    // テキスト
+builder.setAutoCancel(true);    // 通知タップで通知を消す
+PendingIntent intent = PendingIntent.getActivity(this, 10, new Intent(this, HelloActivity.class), PendingIntent.FLAG_ONE_SHOT);
+builder.setContentIntent(intent);    // 通知タップで発行するインテントセット
+
+// 3.通知の実行
+NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+manager.notify(1, builder.build());
+</code></pre>
+    <blockquote>
+        <p><small>紛らわしいが、NotificationCompat.Builder で出来上がる通知クラスは NotificationCompat ではなく Notificaton のインスタンス。NotificationManagerCompat#notifiy() の対象も Notification。</small></p>
+    </blockquote>
+    <h3 id="pendingintent">PendingIntent</h3>
+    <ul>
+        <li>ペンディングインテントとは Developers には次のように書かれている。<br>
+            <blockquote>
+                <p><small><a href="https://developer.android.com/reference/android/app/PendingIntent.html">PendingIntent | Developers</a><br>
+A description of an Intent and target action to perform with it. Instances of this class are created with getActivity(Context, int, Intent, int), getActivities(Context, int, Intent[], int), getBroadcast(Context, int, Intent, int), and getService(Context, int, Intent, int); the returned object can be handed to other applications so that they can perform the action you described on your behalf at a later time.<br><br>
+By giving a PendingIntent to another application, you are granting it the right to perform the operation you have specified as if the other application was yourself (with the same permissions and identity). As such, you should be careful about how you build the PendingIntent: almost always, for example, the base Intent you supply should have the component name explicitly set to one of your own components, to ensure it is ultimately sent there and nowhere else.<br>
+　　　↓　<br>
+<strong>・PendingIntent は他のアプリに渡せるインテント。<br>
+・他のアプリ(アプリB)に渡し、アプリBで発行しても PendingIntent の生成元(アプリA)でインテント発行したかのように権限が付与して実行される。（他のアプリでは起動できなアクティビティも起動できるとか、そういうセキュリティ的な意味？）</strong></p>
+</blockquote>
+</li>
+</ul>
+<p></small></p>
+                <ul>
+                    <li>つまり簡単に理解するなら「<strong>PendingIntent とは Android システム含め自信以外のアプリで、自信が発行したかのように実行できるインテント</strong>」ということになる。</li>
+                    <li>PendingIntent を使う機会として次のようなものがある。
+                        <ul>
+                            <li><code>Notification</code> のタップでのインテント発行（発行は Android システム）</li>
+                            <li><code>AlarmManager</code> の設定時刻になったときのインテント発行（発行は Android システム）</li>
+                            <li><code>AppWidget</code> のクリック時のインテント発行（発行は Android システム？）</li>
+                            <li>など</li>
+                        </ul>
+                    </li>
+                    <li><code>PendingIntent</code> は <code>PendingIntent</code> クラスの下記 static メソッドで生成する。<pre><code class="lang-java">PendingIntent getActivity(Context context, int requestCode, Intent intent, int flags)
+PendingIntent getService(Context context, int requestCode, Intent intent, int flags)
+PendingIntent getBroadcast(Context context, int requestCode, Intent intent, int flags)
+　
+アクティビティ/サービス/ブロードキャストのペンディングインテントを生成します。
+生成したペンディングインテントは Andriod システムで管理される。
+　
+context      :コンテキスト
+requestCode  :ペンディングインテントを識別するためのコード
+            （このコードで Android システム内でインテントを区別し管理している。同じの２個発行すると上書きされる。）
+flags        :ペンディングインテントのインスタンス生成を制御するためのフラグ
+</code></pre>
+                    </li>
+                </ul>
+                <h3 id="-">通知の拡張</h3>
+                <p>Android のバージョンアップによって通知が拡張されている。</p>
+                <ul>
+                    <li><strong>Android 4.1</strong>
+                        <ul>
+                            <li>通知が <strong>展開できる</strong> ようになり、多くの情報を表示できる３つのスタイルの追加
+                                <ul>
+                                    <li><strong><font color="teal">BigTextStyle</font></strong> - 長いテキストを表示できる。</li>
+                                    <li><strong><font color="teal">BigPictureStyle</font></strong> - 大きい写真がつけられる。</li>
+                                    <li><strong><font color="teal">InboxStyle</font></strong> - テキストが複数個並べられる。（最大8個。それ以上は省略(...)になる）</li>
+                                </ul>
+                            </li>
+                            <li>通知へのボタン配置
+                                <ul>
+                                    <li>通知にボタンが配置できるようになり、<code>PendingIntent</code> の発行が可能。</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>Android 5.0</strong>
+                        <ul>
+                            <li><strong><font color="teal">ロック画面通知</font></strong>
+                                <ul>
+                                    <li>ロック画面に通知の内容が表示される。</li>
+                                </ul>
+                            </li>
+                            <li><strong><font color="teal">ヘッドアップ通知</font></strong>
+                                <ul>
+                                    <li>全画面の場合に通知時に画面上部にフローティングで出す。</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3 id="3-">3つの展開スタイルの使用</h3>
+                <ul>
+                    <li>スタイルのクラスが用意されているので、そのインスタンスを生成し、
+                        <code>NotificationCompat.Builder#setStyle(スタイル)</code> でスタイルを設定するだけ。</li>
+                    <li>このスタイルを適用すると、<strong>通知が「閉じた状態」と「展開した状態」の 2 通りの表示</strong> ができるようになる。<br> → 通知の展開する感じは「<em>img/通知の展開.gif</em>」で見れます。</li>
+                    <li>閉じたい際と開いた際のタイトル、テキストなどの設定箇所が異なるので注意。
+                        <ul>
+                            <li>閉じた状態<br><pre><code class="lang-java">タイトル  :NotificationCompat.Builder#setContentTitle()
+テキスト  :NotificationCompat.Builder#setContentText()
+</code></pre>
+                            </li>
+                            <li>展開した状態<br><pre><code class="lang-java">タイトル  :NotificationCompat.XxxStyle#setBigContentTitle()
+サマリ    :NotificationCompat.XxxStyle#setSummaryText()
+</code></pre>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <p>例) BigTextStyle</p>
+                <pre><code class="lang-java">NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+...
+builder.setContentTitle(　タイトル　);
+builder.setContentText(　テキスト　);
+...
+
+NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
+style.setBigContentTitle(　展開時タイトル　);
+style.bigText(　展開時テキスト、展開時テキスト、...　);
+style.setSummaryText(　サマリー、サマリー、サマリー、サマリー　);
+builder.setStyle(style);
+</code></pre>
+                <p><br> 例) BigPictureStyle</p>
+                <pre><code class="lang-java">NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle();
+style.bigPicture(BitmapFactory.decodeResource(getResources(), R.drawable.sample1_720x477));
+style.setBigContentTitle(　展開時タイトル　);
+style.setSummaryText(　サマリー、サマリー、サマリー、サマリー　);
+builder.setStyle(style);
+</code></pre>
+                <p><br> 例) InboxStyle</p>
+                <pre><code class="lang-java">NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
+for (int i = 1; i 　= 10; i++) {
+  style.addLine(　ライン　 + i);
+}
+style.setBigContentTitle(　展開時タイトル　);
+style.setSummaryText(　サマリー、サマリー、サマリー、サマリー　);
+builder.setStyle(style);
+</code></pre>
+
+                <h3 id="-">通知のアイコンが真っ白になる問題</h3>
+                <ul>
+                    <li>Android 5.0 から通知の小さいアイコンを <strong>透過がかかってない部分を真っ白</strong> にして表示するようになった。<br> → 通知の小さいアイコンは <strong>透過をかけて影絵のように</strong> 作る必要がある。</li>
+                </ul>
+                <h3 id="-">通知の削除と上書き</h3>
+                <ul>
+                    <li>通知を消すには <code>NotificationManger#cancel()</code> を使う。</li>
+                    <li>通知を上書きするには上書きしたい通知と <strong>同じ通知ID</strong> を持つ通知を実行すればよい。</li>
+                </ul>
+                <p>例) 削除</p>
+                <pre><code class="lang-java">NotificationManager manager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+manager.cancel(3);
+</code></pre>
+                <h3 id="-">通知関連のメソッド</h3>
+                <p><strong>NotificationMangerCompat クラス</strong></p>
+                <pre><code class="lang-java">public static NotificationMangerCompat from(Context context)
+
+  通知マネージャを取得。
+
+  context          :コンテキスト
+</code></pre>
+                <pre><code class="lang-java">public void notify(int id, Notification notification)
+
+  通知を実行します。
+
+  id            :通知ID
+  notification  :通知情報
+</code></pre>
+                <pre><code class="lang-java">public void cancel(int id)
+
+  通知をキャンセルします。
+
+  id            :通知ID
+</code></pre>
+
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h3 id="-">プリファレンスとは</h3>
+        <p>→ 「<em>内部・外部ストレージ.pptx</em>」 参照</p>
+        <h3 id="-">他アプリからのプリファレンスへのアクセス</h3>
+        <ul>
+            <li>デフォルトプリファレンスは他アプリからは <strong>参照できない</strong>。</li>
+            <li>カスタムプリファレンスはファイル作成時に指定する <strong>ファイル作成モード次第</strong> で他アプリからも参照可能。</li>
+        </ul>
+        <h3 id="-">ファイル作成モードとは</h3>
+        <ul>
+            <li>「
+                <font color="teal"><strong>作成モード</strong></font>」とはファイルを生成するときの「ファイルのパーミッション(※1)」を指定するもの。</li>
+            <li>作成モードが指定できるファイルは下記 3 つ。外部ストレージやキャッシュのファイル作成には指定できない。<pre><code class="lang-java">・カスタムプリファレンス
+・内部ストレージ
+・データベースファイル　※ ヘルパーに作成を任せる場合は指定できない。
+</code></pre>
+            </li>
+            <li>作成モードで指定できる値は下記の 3 つ。<pre><code class="lang-java">Context.MODE_PRIVATE(0)            :そのアプリでのみ読み書き可能 (660)
+Context.MODE_WORLD_READABLE(1)     :他のアプリからも読める (664)
+Context.MODE_WORLD_WRITEABLE(2)    :他のアプリからも書ける (662)
+</code></pre>
+                <blockquote>
+                    <p><small>API level 17 から MODE_WORLD_READABLE と MODE_WORLD_WRITEABLE はセキュリティ事情から非推奨になっている。つまり、使うのは MODE_PRIVATE のみと考えればいい。<br>
+ちなみに他アプリから読み書きさせる場合は、MODE_WORLD_READABLE|MODE_WORLD_WRITEABLE とビットORで指定する。</small></p>
+                </blockquote>
+            </li>
+        </ul>
+        <p><br></p>
+        <blockquote>
+            <p><small><strong>(※1)「ファイルのパーミッション」について</strong><br>
+「ファイルのパーミッション」とはそのファイル・ディレクトリに対してどんなユーザーがどんな操作が可能かを設定するもの。<br>
+対象は「所有ユーザー」「所有グループ」「その他ユーザー」の3つ。<br>
+操作は「読み(r:4)」「書き(w:2)」「実行(x:1)」の3つ。<br>
+これを「rwxrwxrwx」のような文字もしくは「777」のような数値で表す。<br>
+<br>
+例) 所有ユーザーが読み/書き/実行、所有グループが読み/書き、その他ユーザーが読みのパーミッションの場合<br>
+    rwxrw-r-- (764)
+</small></p>
+        </blockquote>
+        <h3 id="-">プリファレンスへの書き込み</h3>
+        <h4 id="point">Point</h4>
+        <ul>
+            <li>プリファレンスへの読み書きは SharedPreferences のインスタンスに対して行うが、読みと書きで多少異なる。
+                <ul>
+                    <li>読み込みの場合<br> → SharedPreferences から直接読み込み。</li>
+                    <li>書き込みの場合<br> → Editor に対して編集を行い、その後で Editor の編集内容をファイルに対し確定(書き込み)をする。</li>
+                </ul>
+            </li>
+        </ul>
+        <h4 id="-">手順</h4>
+        <ol>
+            <li><code>SharedPreferences</code> のインスタンス取得。<pre><code class="lang-java">カスタム   → Context#getSharedPreferences()
+デフォルト  → PreferenceManager#getDefaultSharedPreferences()
+</code></pre>
+            </li>
+            <li><code>SharedPreferences</code> から <code>Editor</code> インスタンス取得。</li>
+            <li><code>Editor#putXxx()</code> でデータの書き込み。</li>
+            <li><code>Editor#commit()</code> でファイルに書き込み。</li>
+        </ol>
+        <p>例) カスタムプリファレンスに書き込み</p>
+        <pre><code class="lang-java">// SharedPreferences の取得
+SharedPreferences prefs = getSharedPreferences(test, MODE_PRIVATE);
+
+// Editor の取得
+SharedPreferences.Editor editor = prefs.edit();
+
+// Editor に書き込み
+editor.putBoolean(key1, true);
+editor.putInt(key2, 100);
+
+// ファイルに書き込み
+editor.commit();
+</code></pre>
+        <h3 id="-">プリファレンスからの読み込み</h3>
+        <h4 id="-">手順</h4>
+        <ol>
+            <li><code>SharedPreferences</code> のインスタンス取得。（書き込みと同様）</li>
+            <li><code>SharedPreferences#getXxx()</code> でデータの読み込み。</li>
+        </ol>
+        <p>例) カスタムプリファレンスの読み込み</p>
+        <pre><code class="lang-java">// SharedPreferences の取得
+SharedPreferences prefs = getSharedPreferences(test, MODE_PRIVATE);
+
+// データ読み込み
+boolean val1 = prefs.getBoolean(key1, false);
+int val2 = prefs.getInt(key2, 0);
+</code></pre>
+        <h3 id="-">別のアプリのプリファレンスからの読み込み</h3>
+        <h4 id="-">手順</h4>
+        <ol>
+            <li>別アプリのパッケージ名から <code>Context</code> インスタンスを生成。</li>
+            <li>その <code>Context</code> インスタンスを使って <code>SharedPreferences</code> インスタンスを取得。</li>
+            <li>データ取得。</li>
+        </ol>
+        <p>例)</p>
+        <pre><code class="lang-java">try {
+    Context context = createPackageContext(s2.sample.hoge, 0);
+    SharedPreferences prefs = context.getSharedPreferences(test, MODE_PRIVATE);
+
+    boolean val1 = prefs.getBoolean(key1, false);
+    int val2 = prefs.getInt(key2, 0);
+
+} catch (NameNotFoundException e) {
+}
+</code></pre>
+        <blockquote>
+            コンテンツプロバイダ、コンテントリゾルバはコンテンツプロバイダを使う場合の登場人物で、本章では登場しません。
+        </blockquote>
+        <h3 id="-sqliteopenhelper-sqlitedatabase-">データベース、SQLiteOpenHelper、SQLiteDatabase の関係</h3>
+        <pre><code class="lang-text">プログラム
+            ↓           get
+        SQLiteDatabase ←---- SQLiteOpenHelper(自分で作る)
+            │                      │ DB作成
+            │ DB操作（insertとか）   │ テーブル作成
+            ↓                      ↓
+        +--------------------------------------+
+        │             DB (テーブル)             │
+        +--------------------------------------+
+        </code></pre>
+        <h3 id="-">サンプル用テーブル</h3>
+        <ul>
+            <li>DB の章でサンプルとして使用するテーブル定義。</li>
+        </ul>
+        <pre><code class="lang-text">[従業員テーブル]
+        ――――――――――――――――――――――――――――――――
+        テーブル名: employee
+        テーブル定義:
+
+        カラム名(物理名) 　カラム名(論理名)      型          制約
+        ----------------------------------------------------------------
+        _id             ID                  INTEGER     プライマリーキー、自動採番
+        number          従業員番号            TEXT        NOT NULL
+        name            名前                 TEXT
+        gender          性別 (0:男性 1:女性)  INTEGER
+        update_date     更新日               INTEGER
+        </code></pre>
+        <p><br></p>
+    </div>
+</body>
+
+</html>

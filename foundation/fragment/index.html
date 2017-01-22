@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+
+<body>
+    <h3 id="-">フラグメントとは</h3>
+    <ul>
+        <li>Android 3.0 でタブレットなどの大型画面の UI デザインに対応するために、<strong>画面を構成するペインとなる UI コンポーネント</strong> として導入された。<br>
+            <img src="https://developer.android.com/images/fundamentals/fragments.png" width="400" style="padding:1px;margin-bottom:18px;" />
+            <blockquote>
+                <p><small>「<strong>ペイン</strong>」とは、画面を複数の表示領域に分割して表示した際の、分割した個々の領域のことをいう。</small></p>
+            </blockquote>
+        </li>
+        <li>簡単に理解するなら、<strong>画面のペインくらいの大きい塊として扱える UI 部品</strong> と思っておけばいい。
+            <blockquote>
+                <p><small>Developers を見ると「Fragment は、Activity でのユーザー インターフェースの挙動や部位を表すもの」とある。まったくイメージが湧かない・・・</small></p>
+            </blockquote>
+        </li>
+        <li>これだけだとビューをいっぱい持っているカスタムビューと大差ない気がする。カスタムビューと大きく違うのはフラグメントにはカスタムビューには無い、ペインとして扱うのに便利な下記のような機能が備わっている。
+            <ol>
+                <li><strong><font color="teal">アクティビティのようなライフサイクル(onStart, onResume, ...)</font></strong><br> → 画面のライフサイクルに合わせた処理が行いやすい。</li>
+                <li><strong><font color="teal">アクティビティスタックのようなフラグメントを積めるスタック</font></strong><br> → フラグメントだけを切り替えたり、back キーで戻したりと画面遷移のようなことができる。</li>
+                <li><strong><font color="teal">フラグメント単位での破棄・再生成</font></strong><br> → メモリが足りなくなった場合に解放できる？</li>
+                <li><strong><font color="teal">フラグメント変更のトランザクション</font></strong><br> → 便利？むしろこのせいでフラグメントが難しいものになっている・・・</li>
+            </ol>
+        </li>
+        <li>フラグメントは 3.0 以降のネイティブに入っているし、support-v4 でも提供されている。新しいバージョンでフラグメントに機能やメソッドが追加されていることから、サポートライブラリを使う方が良さそう。<strong>（以降、サポートライブラリのフラグメントを使う前提で説明していく）</strong><pre><code class="lang-java">ネイティブ　　　→ android.app.Fragment
+support-v4　　→ android.support.v4.app.Fragment
+</code></pre>
+        </li>
+    </ul>
+
+</body>
+
+</html>

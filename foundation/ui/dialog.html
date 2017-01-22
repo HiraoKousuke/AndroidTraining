@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h3 id="-">ダイアログの種類</h3>
+    <ul>
+        <li>用途に応じてあらかじめ用意されたダイアログがいくつかある。
+            <ul>
+                <li><strong><font color="teal">AlertDialog</font></strong> - アラート表示用ダイアログ</li>
+                <li><strong><font color="teal">ProgressDialog</font></strong> - プログレス表示用ダイアログ</li>
+                <li><strong><font color="teal">DatePickerDialog</font></strong> - 日付選択用ダイアログ</li>
+                <li><strong><font color="teal">TimePickerDialog</font></strong> - 時刻選択用ダイアログ</li>
+            </ul>
+        </li>
+        <li>各ダイアログの継承関係は下記のようになっている。<pre><code class="lang-text">Dialog
+  └ AlertDialog
+      ├ ProgressDialog
+      ├ TimePickerDialog
+      └ DatePickerDialog
+</code></pre>
+        </li>
+    </ul>
+    <h3 id="-">ダイアログの構成要素</h3>
+    <ul>
+        <li><code>AlertDialog</code> は 3 つの領域で構成されている。<code>ProgrsssDialog</code>, <code>DatePicdkerDialog</code>, <code>TimePickerDialog</code> も同様
+            <ol>
+                <li><strong>タイトル</strong> - ダイアログのタイトル部分</li>
+                <li><strong>コンテンツエリア</strong> - コンテンツを表示するエリア</li>
+                <li><strong>アクションボタン</strong> - ボタンを表示するエリア。YESボタン、NOボタン、どちらでも無いボタンの 3 種類を配置できる。</li>
+            </ol>
+        </li>
+        <li>各ダイアログごとにコンテンツエリアに専用のビューが配置されたり、あらかじめアクションボタンが設定されている。</li>
+    </ul>
+    <h3 id="alertdialog-">AlertDialog の作成</h3>
+    <h4 id="point">Point</h4>
+    <ul>
+        <li><code>AlertDialog</code> のコンストラクは <code>protected</code> で定義されているので <code>new AlertDialog()</code> できない。 代わりにインスタンスの作成を行う <code>Builder</code> クラスが用意されているのでそれを使う。</li>
+        <li>ダイアログキャンセルのリスナーは下記メソッドで設定できる。<pre><code class="lang-java">Dialog#setOnCancelListener();
+  または
+AlertDialog.Builder#setOnCancelListener()
+</code></pre>
+        </li>
+        <li>アクションボタンは下記メソッドで追加できる。<pre><code class="lang-java">AlertDialog#setButton()
+  または
+AlertDialog.Builder#set{Positive|Negative|Neutral}Button()
+</code></pre>
+        </li>
+    </ul>
+    <h4 id="-">手順</h4>
+    <ol>
+        <li><code>AlertDialog.Builder</code> のインスタンス作成。</li>
+        <li><code>Builder</code> のインスタンスにタイトル、メッセージ、ボタンを設定。必要があればキャンセルリスナー登録。</li>
+        <li><code>AlertDialog.Builder#create()</code> で <code>AlertDialog</code> インスタンスの取得。</li>
+        <li><code>Dialog#show()</code> でダイアログ表示。</li>
+    </ol>
+    <p>例)</p>
+    <pre><code class="lang-java">// ビルダー生成
+AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+// ビルダーにダイアログ情報のセット
+builder.setTitle(　タイトル　);
+builder.setMessage(　メッセージ　);
+builder.setPositiveButton(　ok　, new DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        // 肯定ボタンの処理
+    }
+});
+builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        // キャンセル時の処理
+    }
+});
+
+// ビルダーから Dialog インスタンス取得
+AlertDialog dialog = builder.create();
+
+// ダイアログ表示
+dialog.show();
+</code></pre>
+    <h3 id="progressdialog-">ProgressDialog の作成</h3>
+    <h4 id="point">Point</h4>
+    <ul>
+        <li><code>ProgressDialog</code> は特にビルダーはないので、そのままインスタンスを作成する。</li>
+    </ul>
+    <blockquote>
+        <p><small>デザインガイド的にはコンテンツの読み込み中を表現したい場合は ProgressDialog じゃなく、コンテンツ内に ProgressBar を使うことを推奨している。</small></p>
+    </blockquote>
+    <h4 id="-">手順</h4>
+    <ol>
+        <li><code>ProgressDialog</code> のインスタンス作成。</li>
+        <li>インスタンスにタイトル、メッセージ、ボタンを設定。必要があればキャンセルリスナー登録。</li>
+        <li><code>Dialog#show()</code> でダイアログ表示。</li>
+    </ol>
+    <p>例)</p>
+    <pre><code class="lang-java">// Dialog インスタンス生成
+ProgressDialog dialog = new ProgressDialog(this);
+
+// ダイアログ情報のセット
+dialog.setTitle(　タイトル　);
+dialog.setMessage(　メッセージ　);
+dialog.setButton(DialogInterface.BUTTON_POSITIVE, 　ok　, new DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        // 肯定ボタンの処理
+    }
+});
+
+dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        // キャンセル時の処理
+    }
+});
+
+// ダイアログの表示
+dialog.show();
+</code></pre>
+    <h3 id="-cancel-dismiss-">ダイアログを閉じる際に cancel() を使うか dismiss() を使うか</h3>
+    <ul>
+        <li>どちらもダイアログを閉じるが、<code>cancel()</code> の場合は「キャンセルで閉じる」となるので <code>onCancel()</code> のイベントハンドラが呼ばれる。 普通に閉じるとしたい場合は <code>dismiss()</code> を使う。</li>
+    </ul>
+    <h3 id="v7-appcompat-alertdialog-">v7-appcompat の AlertDialog とは</h3>
+    <ul>
+        <li><code>AlertDialog</code> には v7-appcompatの「<code>android.support.v7.app.AlertDialog</code>」とネイティブの「<code>android.app.AlertDialog</code>」の 2 つがある。両者の違いは前者だと Android 5.0 未満でも最新デザイン(マテリアル)として表示される。<br>
+            <blockquote>
+                <p><small>アクションバーとかと全く同じ話。</small></p>
+            </blockquote>
+        </li>
+        <li>あと v7-appcompat の方は AlertDialog に public なコンストラクタがあったりメソッドも多少最新仕様になっている。</li>
+    </ul>
+</div>
+</body>
+
+</html>

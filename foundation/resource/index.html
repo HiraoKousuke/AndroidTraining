@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h3 id="-">リソースの概要と種類</h3>
+        <ul>
+            <li>アプリ内で使用する画像、動画、画面のレイアウト、そして文字列などのアプリの材料を持つことができ、それをプログラム内で使用することができる。このアプリの材料のことを「<strong>リソース</strong>」という。</li>
+            <li>リソースは res/ フォルダ配下にリソースの種類によってごとに用意されたサブフォルダに分けて配置する。</li>
+            <li>values フォルダ以外は 1ファイルが 1リソースとなっている。</li>
+            <li>values フォルダのリソースはXML内の resources 要素配下に定義した「リソース要素」ごとに1リソースとなっている。 また、resources で定義するリソースは values 配下であればファイルを分けても1ファイルに全て定義してもよい。
+                <blockquote>
+                    Android のガイド的には文字列なら strings.xml みたいなオススメはある。
+                </blockquote>
+            </li>
+        </ul>
+        <p>例) values/hoge.xml</p>
+        <pre><code class="lang-xml">resources
+    string name=titleタイトル/string  !-- 文字列リソース --
+    color name=red#ff0000/color     !-- カラーリソース --
+    ...
+/resources
+</code></pre>
+        <h3 id="-">リソースの構成</h3>
+        <pre><code class="lang-text">res/
+    animator/
+        └ Property アニメーション  ：Property アニメーションの定義XML
+    anim/
+        └ Tween アニメーション     ：Tween アニメーションの定義XML
+    color/
+        └ カラーセレクタ           ：ビューの状態によるカラー値選択を定義するXML　（drawable/配下でもよい）
+    drawable/
+        ├ 画像                   ：画像(png/jpg/gif)ファイル
+        ├ 9-patch　              ：9-patch画像(*.9.png)のファイル
+        ├ ドローアブルセレクタ      ：ビューの状態によるドローアブル値選択を定義するXML
+        ├ シェイプ                ：ビューの形状を定義するXML
+        └ Frame アニメーション     ：Frame アニメーションの定義XML
+    mipmap/
+        └ ランチャーアイコン        ：アイコン画像(png/jpg/gif)
+    layout/
+        └ レイアウト 　            ：ビューの配置を定義するXML
+    menu/
+        └ メニュー                ：メニューに表示する項目を定義するXML
+    values/
+        ├ スタイル                ：ビューのスタイルを定義するXML （HTMLのCSSに近い)
+        ├ 文字列、カラー、数値、ディメンション、配列　：単純な値を定義するXML
+        ├ 属性　                  ：ビューの属性を定義したXML
+    raw/
+        └ raw                    ：任意のファイル。リソースIDが振られる。
+                                  R.raw.xxx。Resources.openRawResource() で InputStream が取得できる。
+    xml/
+        └ XML                    ：任意のXML。Resources.getXML() で取得できる。
+</code></pre>
+    </div>
+</body>
+
+</html>

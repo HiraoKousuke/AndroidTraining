@@ -1,10 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title></title>
-  </head>
-  <body>
+</head>
 
-  </body>
+<body>
+    <h3 id="-">レイアウトインフレータとは</h3>
+    <ul>
+        <li>インフレータとは XML ファイルを読み込み、その内容の Java インスタンスを生成してくれるもの。</li>
+        <li>インフレーターには対象となる XML によっていくつか種類がある。下記に主要なものをあげる。
+            <ol>
+                <li><strong><font color="teal">LayoutInflater</font></strong><br> レイアウトXML → <code>View</code> インスタンス</li>
+                <li><strong><font color="teal">MenuInflater</font></strong><br> メニューXML → <code>MenuItem</code> のインスタンス</li>
+                <li><strong><font color="teal">AnimatorInflater</font></strong><br> Property アニメーション XML → <code>Animator</code> インスタンス</li>
+            </ol>
+        </li>
+    </ul>
+    <h3 id="-">レイアウトインフレータの取得</h3>
+    <ul>
+        <li>レイアウトインフレータのインスタンスは次の３つの方法で取得することができる。 好きなものを使えばよい。
+            <ol>
+                <li><code>LayoutInflater</code> の <code>static</code> メソッドで<pre><code class="lang-java">LayoutInflater inflater = LayoutInflater.from(context);
+</code></pre>
+                </li>
+                <li>システムサービスから<pre><code class="lang-java">LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+</code></pre>
+                </li>
+                <li><code>Activity</code> のメソッドで<pre><code class="lang-java">LayoutInflater inflater = activity.getLayoutInflater();
+</code></pre>
+                </li>
+            </ol>
+        </li>
+    </ul>
+
+</body>
+
 </html>

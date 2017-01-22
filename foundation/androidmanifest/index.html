@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h3 id="androidmanifest-">AndroidManifest とは</h3>
+    <ul>
+        <li>アプリがどのような仕様を持つかを Android システムに教えるためのファイル。 Android システムはこの情報を読み取って OS 内でアプリを管理したり、インテントを発行する際に対象となるコンポーネントを探すのに使っている。</li>
+        <li>アプリに関する下記のような仕様を記述する。
+            <ol>
+                <li><strong>アプリの基本情報</strong><br> アプリ名、バージョン、アイコン、パッケージ名など
+                </li>
+                <li><strong>アプリに必要な許可・デバイス要件</strong><br> アプリが必要とする許可や、アプリを実行するのに必要なデバイス要件。
+                </li>
+                <li><strong>コンポーネント</strong><br> アプリに含まれるアプリケーションコンポーネントの宣言。
+                </li>
+            </ol>
+        </li>
+    </ul>
+    <h3 id="androidmanifest-">AndroidManifest の構造</h3>
+    <ul>
+        <li>マニフェストの主要要素の構造は下記のようになっている。</li>
+    </ul>
+    <pre><code class="lang-xml">　?xml version=　1.0　 encoding=　utf-8　?　
+　manifest　
+  　uses-sdk /　
+  　uses-permission /　
+  　uses-feature /　
+
+  　application　
+      　activity　
+          　intent-filter　...　/intent-filter　
+          　meta-data /　
+      　/activity　
+      　service　
+          　intent-filter　...　/intent-filter　
+          　meta-data/　
+      　/service　
+      　receiver　
+          　intent-filter　...　/intent-filter　
+          　meta-data /　
+      　/receiver　
+      　provider　...　/provider　
+  　/application　
+　/manifest　
+</code></pre>
+    <p>※ 細かい構造については下記 Developers 参照。<br>
+        <a href="http://developer.android.com/guide/topics/manifest/manifest-intro.html#filestruct">アプリマニフェスト | Developers</a></p>
+    <h3 id="-">主な要素</h3>
+    <h4 id="1-lt-manifest-gt-">1. 　manifest　</h4>
+    <pre><code class="lang-xml">　manifest xmlns:android=　http://schemas.android.com/apk/res/android　
+  package=　文字列　
+  android:versionCode=　数値　
+  android:versionName=　文字列　 　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>マニフェストファイルのルート要素。パッケージ名、アプリバージョンを指定する。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+  <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">package</td>
+                <td style="text-align:left">Java のパッケージ名。ストア、端末でアプリを一意に識別する名前になる。プロセスやアフィニティのデフォルト名としても使われる。</td>
+                <td style="text-align:left">　org.sample.helloworld　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">versionCode</td>
+                <td style="text-align:left">アプリのバージョン番号。ユーザーには見えない。この番号の大小でアプリの新旧が判断される。</td>
+                <td style="text-align:left">　12　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">versionName</td>
+                <td style="text-align:left">アプリのバージョン名。任意の文字列。ストアなどでユーザーに表示される。</td>
+                <td style="text-align:left">　2.1.0　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="2-lt-uses-sdk-gt-">2. 　uses-sdk　</h4>
+    <pre><code class="lang-xml">　uses-sdk
+  android:minSdkVersion=　数値　
+  android:maxSdkVersion=　数値　
+  android:targetSdkVersion=　数値　 /　
+</code></pre>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">{min｜max}SdkVersion</td>
+                <td style="text-align:left">アプリの実行に必要とする最小/最大の API level。<br>端末の API level がこの範囲内に無い場合はインストールできない。ストアにも表示されない。</td>
+                <td style="text-align:left">　12　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">targetSdkVersion</td>
+                <td style="text-align:left">アプリをどの API level の仕様で動かすかを指定するもの。(※1)</td>
+                <td style="text-align:left">　23　</td>
+            </tr>
+        </tbody>
+    </table>
+    <blockquote>
+        <p><small>(※1) targetSdkVersion で指定した API level のプラットフォーム仕様でアプリを動かすというもの。<br>
+例えば、23 で Foo クラスが削除、Bar ビューのデザイン変更があった場合、<br>
+　targetSdkVersion=　23　　→ Foo が使えない、Bar のデザインは変更<br>
+　targetSdkVersion=　22　　→ Foo が使える、Bar のデザインは古いまま<br></small></p>
+    </blockquote>
+    <h4 id="3-lt-uses-permission-gt-">3. 　uses-permission　</h4>
+    <pre><code class="lang-xml">　uses-permission android:name=　文字列　 /　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>使用が保護されている機能のうち、使用を許可してほしいものを宣言する。</li>
+        <li>ストアからアプリを落とす際にこれらがユーザーに表示されたりする。</li>
+        <li>許可を得る方法はバージョンによって異なる。
+            <ul>
+                <li>6.0 未満<br> → アプリをインストールしたタイミングで自動で全ての許可を得る。</li>
+                <li>6.0 以降<br> → アプリを実行中にその許可が必要になったタイミングで許可を得る。この 6.0 から導入されたアプリ実行時に許可を得る仕組みを「<strong>ランタイムパーミッション</strong>」という。</li>
+            </ul>
+        </li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">許可の名前。</td>
+                <td style="text-align:left">　android.permission.INTERNET　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="4-lt-permission-gt-">4. 　permission　</h4>
+    <pre><code class="lang-xml">　permission
+  android:name=　文字列　
+  android:protectionLevel=[　normal　 | 　dangerous　 | 　signature　 | 　signatureOrSystem　] /　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>独自の許可を定義する。定義した許可はコンポーネントへのアクセスなどに使用できる。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">許可の名前</td>
+                <td style="text-align:left">　org.sample.permission.READ_DATA　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">protectionLevel</td>
+                <td style="text-align:left">保護レベル</td>
+                <td style="text-align:left">　normal　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="5-lt-uses-feature-gt-">5. 　uses-feature　</h4>
+    <pre><code class="lang-xml">　uses-feature
+  android:name=　文字列　
+  android:required=[　true　 | 　false　]
+  android:glEsVersion=　数値　 /　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アプリが必要とするソフトウェア・ハードウェア要件を宣言する。</li>
+        <li>この要件を満たしていない端末の場合、アプリはインストールできないし、そもそもそのユーザーのストアにも表示されない。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">必要とする要件の名前。</td>
+                <td style="text-align:left">　android.hardware.camera　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">required</td>
+                <td style="text-align:left">この要件を必須とするか。true の場合、この要件を満たしてない端末だとインスールもストア掲載もされない。</td>
+                <td style="text-align:left">　false　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">glEsVersion</td>
+                <td style="text-align:left">必要とする OpenGL ES のバージョン。</td>
+                <td style="text-align:left">　0x00020000　</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>※ uses-feature の注意点<br>
+        <a href="http://qiita.com/nein37/items/da991b02441fa4da5432">
+            <uses-permission>設定の罠</a>
+    </p>
+    <h4 id="6-lt-application-gt-">6. 　application　</h4>
+    <pre><code class="lang-xml"> 　application
+  android:icon=　drawableリソース　
+  android:label=　文字列リソース　
+  android:name=　文字列　
+  android:theme=　リソース または テーマ　 　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アプリケーションを宣言する要素。子要素にこのポーネントを定義する。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+  <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">icon</td>
+                <td style="text-align:left">アプリ内のコンポーネントの icon のデフォルト値。</td>
+                <td style="text-align:left">　@drawable/ic_icon　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">label</td>
+                <td style="text-align:left">アプリ内のコンポーネントの label のデフォルト値。</td>
+                <td style="text-align:left">　ホーム　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">独自の Application クラスを使用する場合に、そのクラスの完全修飾クラス名を指定。</td>
+                <td style="text-align:left">　org.sample.HelloWorldApplication　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">theme</td>
+                <td style="text-align:left">アプリ内のアクティビティの theme のデフォルト値。</td>
+                <td style="text-align:left">　@style/AppTheme　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="7-lt-activity-gt-">7. 　activity　</h4>
+    <pre><code class="lang-xml">　activity
+  android:configChanges=[　mcc　, 　mnc　, 　locale　,
+      　touchscreen　, 　keyboard　, 　keyboardHidden　, 　navigation　, 　orientation　, 　screenLayout　
+      , 　fontScale　, 　uiMode　]
+  android:exported=[　true　 | 　false　]
+  android:icon=　Drawable リソース　
+  android:label=　文字列リソース　
+  android:launchMode=[　multiple　 | 　singleTop　 | 　singleTask　 | 　singleInstance　]
+  android:name=　文字列　
+  android:process=　文字列　
+  android:screenOrientation=[　unspecified　 | 　user　 | 　behind　 | 　landscape　 | 　portrait　
+      | 　sensor　 | 　nosensor　]
+  android:taskAffinity=　文字列　
+  android:theme=　リソースまたはテーマ　 　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アプリ内にアクティビティがあることを宣言します。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">configChanges</td>
+                <td style="text-align:left">コンフィグレーションのうち、変更があってもアクティビティを再生成せず自身で処理を行う項目を指定。指定したコンフィグレーションが変更された場合は onConfigurationChanged() が呼ばれる。</td>
+                <td style="text-align:left">　orientation&#124;screenSize　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">exported</td>
+                <td style="text-align:left">別アプリから呼び出しが可能かどうか。<br>※ デフォルト値は intent-fileter の有無で異なる。あれば true、なければ false</td>
+                <td style="text-align:left">　false　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">icon</td>
+                <td style="text-align:left">アクティビティのアイコン。アクションバーやランチャーのアイコンなどに使用される。</td>
+                <td style="text-align:left">　@drawable/ic_icon　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">label</td>
+                <td style="text-align:left">アクティビティのラベル。アクションバーのデフォルトのタイトル、ランチャーのアプリの名前などに使用される。</td>
+                <td style="text-align:left"></td>
+            </tr>
+            <tr>
+                <td style="text-align:left">launchMode</td>
+                <td style="text-align:left">起動モード。</td>
+                <td style="text-align:left">　singleTop　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">アクティビティの完全修飾クラス名。アプリのパッケージ名からの相対パスでの指定も可。</td>
+                <td style="text-align:left">　org.sample.HomeActivity　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">process</td>
+                <td style="text-align:left">このアクティビティを実行するプロセス。</td>
+                <td style="text-align:left">　org.sample.log　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">screenOrientation</td>
+                <td style="text-align:left">このアクティビティを実行するプロセス。</td>
+                <td style="text-align:left">　org.sample.log　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">process</td>
+                <td style="text-align:left">アクティビティを表示する向き。</td>
+                <td style="text-align:left">　portrait　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">theme</td>
+                <td style="text-align:left">アクティビティに適用するテーマ。</td>
+                <td style="text-align:left">　@style/AppTheme　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="8-lt-intent-fileter-gt-">8. 　intent-fileter　</h4>
+    <pre><code class="lang-xml">　intent-filter　
+  　action
+      android:name=　文字列　 /　
+  　category
+      android:name=　文字列　 /　
+  　data
+      android:host=　文字列　
+      android:mimeType=　文字列　
+      android:path=　文字列　
+      android:pathPattern=　文字列　
+      android:pathPrefix=　文字列　
+      android:port=　文字列　
+      android:scheme=　文字列　 /　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アクティビティ、サービス、ブロードキャストのインテントフィルタを設定します。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">action/@name</td>
+                <td style="text-align:left">アクション名</td>
+                <td style="text-align:left">　android.intent.action.VIEW　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">category/@name</td>
+                <td style="text-align:left">カテゴリ名</td>
+                <td style="text-align:left">　android.intent.category.DEFAULT　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data/@schema</td>
+                <td style="text-align:left">データのスキーマ部分の条件。</td>
+                <td style="text-align:left">　http　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data/@host</td>
+                <td style="text-align:left">データの URI のホスト部分の条件。</td>
+                <td style="text-align:left">　sample.com　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data/@mimeType</td>
+                <td style="text-align:left">データの URI の MIME タイプ部分の条件。</td>
+                <td style="text-align:left">　text/plain　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data/@path</td>
+                <td style="text-align:left">データの URI のパス部分の条件。(完全一致)</td>
+                <td style="text-align:left">　aaa/bbb/ccc　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data/@pathPattern</td>
+                <td style="text-align:left">データの URI のパス部分の正規表現条件。</td>
+                <td style="text-align:left">　aaa/*　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data/@pathPrefix</td>
+                <td style="text-align:left">データの URI のパス部分の先頭一致条件。</td>
+                <td style="text-align:left">　aaa　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data/@port</td>
+                <td style="text-align:left">データのポート部分の条件。</td>
+                <td style="text-align:left">　80　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="9-lt-meta-data-gt-">9. 　meta-data　</h4>
+    <pre><code class="lang-xml">　meta-data
+  android:name=　文字列　
+  android:value=　文字列　 /　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アプリケーションやコンポーネント内で使用できるキーバリュー値を定義する。定義した値はプログラム内で取得することができる。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">キー名</td>
+                <td style="text-align:left">　org.sample.FOO_ID　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">value</td>
+                <td style="text-align:left">値</td>
+                <td style="text-align:left">　12345　</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>例)</p>
+    <pre><code class="lang-xml">　!-- AndroidManifest.xml --　
+　application ...　
+  　meta-data name=　foo　 value=　ふー　 /　
+  ...
+  　activity ...　
+      　meta-data name=　bar　 value=　ばー　 /　
+      ...
+  　/activity　
+　/application　
+</code></pre>
+    <pre><code class="lang-java">// SampleActivity.java
+ApplicationInfo appInfo = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
+String foo = appInfo.metaData.getString(　foo　);
+
+ActivityInfo activityInfo = getPackageManager().getActivityInfo(this.getComponentName(), PackageManager.GET_META_DATA );
+String bar = activityInfo.metaData.getString(　bar　);
+</code></pre>
+    <h4 id="10-lt-service-gt-">10. 　service　</h4>
+    <pre><code class="lang-xml">　service
+  android:exported[=　true　 | 　false　]
+  android:name=　文字列　
+  android:process=　文字列　 　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アプリ内にサービスがあることを宣言します。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">exported</td>
+                <td style="text-align:left">別アプリから呼び出しが可能かどうか。</td>
+                <td style="text-align:left">　false　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">サービスの完全修飾クラス名。</td>
+                <td style="text-align:left">　org.sample.LogService　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">process</td>
+                <td style="text-align:left">このアクティビティを実行するプロセス。</td>
+                <td style="text-align:left">　org.sample.service.log　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="10-lt-receiver-gt-">10. 　receiver　</h4>
+    <pre><code class="lang-xml">　receiver
+  android:exported=[　true　 | 　false　]
+  android:name=　文字列　
+  android:process=　文字列　 　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アプリ内にレシーバがあることを宣言します。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+  <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">exported</td>
+                <td style="text-align:left">別アプリから呼び出しが可能かどうか。</td>
+                <td style="text-align:left">　false　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">レシーバの完全修飾クラス名。</td>
+                <td style="text-align:left">　org.sample.AppReceiver　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">process</td>
+                <td style="text-align:left">このレシーバを実行するプロセス。</td>
+                <td style="text-align:left">　org.sample.app　</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="12-lt-provider-gt-">12. 　provider　</h4>
+    <pre><code class="lang-xml">　provider
+  android:authorities=　リスト　
+  android:exported=[　true　 | 　false　]
+  android:name=　文字列　
+  android:process=　文字列　 　
+</code></pre>
+    <p><strong>【説明】</strong></p>
+    <ul>
+        <li>アプリ内にプロバイダーがあることを宣言します。</li>
+    </ul>
+    <p><strong>【属性】</strong></p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">属性</th>
+                <th style="text-align:left">説明</th>
+                <th style="text-align:left">設定例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">authorities</td>
+                <td style="text-align:left">コンテンツプロバイダの識別名。セミコロン</td>
+                <td style="text-align:left">　org.sample.myprovider　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">exported</td>
+                <td style="text-align:left">別アプリから呼び出しが可能かどうか。</td>
+                <td style="text-align:left">　true　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">name</td>
+                <td style="text-align:left">プロバイダーの完全修飾クラス名。</td>
+                <td style="text-align:left">　org.sample.MyProvider　</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">process</td>
+                <td style="text-align:left">このプロバイダーを実行するプロセス。</td>
+                <td style="text-align:left">　org.sample.myprovider　</td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+
+</body>
+
+</html>

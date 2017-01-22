@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h3 id="ui-">UIスレッドとワーカースレッド</h3>
+        <ul>
+            <li>アプリを起動するとメインとなるスレッドが 1 つ作成され、このスレッドでアプリが実行される。このスレッドを『<strong><font color="teal">メインスレッド</font></strong>』または『<strong><font color="teal">UIスレッド</font></strong>』という。</li>
+            <li>アプリ内で UI スレッドは <strong>1 つのみ</strong> で、それ以外のスレッドを『<strong><font color="teal">ワーカースレッド</font></strong>』という。</li>
+            <li>Android では <strong>UI 操作は UI スレッドでのみ許可</strong> され、ワーカースレッドでは行えない。ワーカースレッドで UI 操作しようとすると例外が発生する。</li>
+            <li>UI スレッドは Java のただのスレッド(java.lang.Thread)ではなく、Thread を拡張した『<strong><font color="teal">HandlerThread</font></strong>』が使われている。
+                <blockquote>
+                    <p><small>実際に HandlerThread は Thread のサブクラスになっている。</small></p>
+                </blockquote>
+            </li>
+        </ul>
+        <h3 id="handlerthread-">HandlerThread まわりの登場人物</h3>
+        <ul>
+            <li><strong><font color="teal">HandlerThread</font></strong>
+                <ul>
+                    <li>スレッドを拡張したもので、内部に Looper を持ち Handler によって処理/メッセージを送ることができるスレッド。</li>
+                </ul>
+            </li>
+            <li><strong><font color="teal">Looper</font></strong>
+                <ul>
+                    <li>処理/メッセージを積むキュー(<strong>メッセージキュー</strong>)を持ち、そのキューに追加されたものを順番に取り出し実行していくもの。</li>
+                    <li>Looper は処理/メッセージを Looper が開始されたスレッドと同じスレッドで実行する。</li>
+                    <li>UIスレッドの Looper をメインスレッドの Looper ということで『<strong><font color="teal">Main Looper</font></strong>』と言う。</li>
+                </ul>
+            </li>
+            <li><strong><font color="teal">Handler</font></strong>
+                <ul>
+                    <li>Looper のキューに処理やメッセージを追加するもの。</li>
+                </ul>
+            </li>
+        </ul>
+        <h3 id="handlerthread-">HandlerThread の仕組み</h3>
+        <p>→ 「<em>資料_UIスレッドとワーカースレッド</em>」を参照</p>
+        <h3 id="-">非同期処理のスレッドいろいろ</h3>
+        <ul>
+            <li>主な非同期処理とそれらが実行されるスレッドは下記のとおり。<pre><code class="lang-text">java.lang.Thread   → Thread
+AsyncTask          → Thread
+AsyncTaskLoader    → Thread (Loader という仕組みで AsyncTask をラップしたもの。つまり中身は AsyncTask)
+Service            → HandlerThread（UI スレッド）
+IntentService      → HandlerThread（ワーカースレッド）
+</code></pre>
+                <blockquote>
+                    <p><small>IntentService とは Service のお手軽版みたいなものとここでは思っておけば良い。</small></p>
+                </blockquote>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>

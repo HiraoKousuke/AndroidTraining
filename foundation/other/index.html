@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h3 id="android-">Android ライブラリとは</h3>
+        <ul>
+            <li>Android アプリと同じ構造(Java ファイルだけではなく、リソースも持っている)を持ったライブラリのこと。</li>
+        </ul>
+        <h3 id="android-">Android で利用できるライブラリ形式</h3>
+        <ul>
+            <li>Android では次の形式のものをライブラリとして利用できる。
+                <ul>
+                    <li><strong><font color="teal">JAR (Java Archive)</font></strong>
+                        <ul>
+                            <li>Java のライブラリ。拡張子は *.jar</li>
+                        </ul>
+                    </li>
+                    <li><strong><font color="teal">AAR (Android Archive)</font></strong>
+                        <ul>
+                            <li>Android ライブラリをアーカイブしたもの。拡張子は *.aar</li>
+                            <li>リソース、AndroidManifest など Android のモジュール構成ままで作ったライブラリ。</li>
+                        </ul>
+                    </li>
+                    <li><strong><font color="teal">ライブラリモジュール</font></strong>
+                        <ul>
+                            <li>Android のモジュール(例えば app モジュール)をライブラリとして扱えるようにしたもの。<br> ※ アーカイブされている訳ではなくモジュールそのもの。</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <h3 id="-jar-aar-">リモートリポジトリの JAR/AAR の利用方法</h3>
+        <ul>
+            <li>build.gradle の dependencies に書くだけ。<br> 例)
+                <pre><code class="lang-text">dependencies {
+  ...
+  // Picaso
+  compile com.squareup.picasso:picasso:2.5.2
+  // OkHttp
+  compile com.squareup.okhttp3:okhttp:3.0.1
+}
+</code></pre>
+            </li>
+        </ul>
+        <h3 id="-jar-">ローカル JAR の利用方法</h3>
+        <ol>
+            <li>プロジェクトルート直下にライブラリを入れるフォルダを作成し(libs が無難)、その配下に jar を入れる。<pre><code class="lang-text">{プロジェクトルート}/
+　　├ app/　
+　　├ build/
+　　└ libs/
+　　　　└ mylib.jar ◆
+</code></pre>
+            </li>
+            <li>*.jar を右クリックすると表示されるメニューで「<strong>Add as library</strong>」を選択。これで build.gradle の dependencies に自動で追加してくれる。<pre><code class="lang-text">dependencies {
+ ...
+ compile files(/Users/saka/workspace/Samples/libs/mylib.jar)
+}
+</code></pre> 絶対パスで指定されるので相対にしておくといい。絶対パスだと他の人の環境でおかしくなるから。
+                <pre><code>dependencies {
+ ...
+ compile files(../libs/mylib.jar)
+}
+</code></pre></li>
+        </ol>
+        <h3 id="-aar-">ローカル AAR の利用方法</h3>
+        <ol>
+            <li>「<strong>File ＞ New ＞ Import .JAR/.AAR Package</strong>」を選択し、下記 2 つの項目を入力し Finish<pre><code class="lang-text">File name        :AARファイルの場所を選択
+Subproject name  :AARファイルを置くプロジェクト直下のディレクトリ名を指定。
+</code></pre>
+            </li>
+            <li>下記のようにファイルが作られる。<br> 例)
+                <pre><code class="lang-text">{プロジェクトルート}/
+　　├ app/　
+　　├ build/
+　　└ mylib/
+　　　　├ build.gradle
+　　　　├ mylib.aar ◆
+　　　　└ mylib.iml
+</code></pre>
+                <blockquote>
+                    AAR の場合は JAR と違って、プロジェクト内にモジュール(サブプロジェクト)として追加される。なので、プロジェクト内のモジュールを定義している settings.xml には下記のように mylib モジュールが追加される。<br> include :app, :mylib
+
+                </blockquote>
+            </li>
+            <li>このままだと AAR はプロジェクト内に入ったけど、app モジュールから参照はできない状態なので、app モジュールからアクセスできるように設定する。「<strong>File ＞ Project Structure</strong>」の左ペインの Modules/app を選択し、dependencies タブで + ボタンを押して mylib.aar を追加。<br>
+                <li>上記を行うと build.gradle に dependencies が追加されて完了。<pre><code>dependencies {
+ ...
+ compile project(:mylib)
+}
+</code></pre></li>
+        </ol>
+    </div>
+</body>
+
+</html>

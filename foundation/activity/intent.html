@@ -4,105 +4,133 @@
 <head>
     <meta charset="utf-8">
     <title>Intent</title>
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <h1>インテント</h1>
-    <h2>1. インテントとは？</h2>
-    <pre>
-   「Intent」を辞書で引くと「意図、目的」
-    Android は「何をしたいか」をシステムに渡すと、その希望にマッチする機能(アプリケーションコンポーネント)を探して自動で呼び出してくれる仕組みがある。
-    この「何をしたいか」のメッセージを「Intent(インテント)」と言う。
-    インテントから呼び出される対象となるのは「アクティビティ」「サービス」「ブロードキャストレシーバ」の３つ
-    コンテンツプロバイダは含まれない。
-    インテントにマッチする機能(アプリケーションコンポーネント)が複数あった場合、どちらを呼び出すかを選択するダイアログ「App Chooser(アプリチューザ)」が表示されユーザーが選択することができる。
-    ※このアプリチューザは対象がアクティビティ以外でも出る？
-    インテントには下記 2 つの情報を設定することができる。
-    呼び出し対象を絞り込む条件 (必須) 呼び出し対象に送るデータ
-  </pre>
-    <h2>2. インテントに設定できる情報</h2>
-    <ul>
-        <li>
-            <p>呼び出し対象を絞り込む条件</p>
-        </li>
-        <li>
-            <p>コンポーネント名</p>
-        </li>
-        <li>
-            <p>データ</p>
-        </li>
-    </ul>
-    <h3>1. コンポーネント名</h3>
-    <pre>
-  ・呼び出し対象となるアプリケーションコンポーネントのクラス名。
-        例)
-        intent.setComponent(newComponent(samples.foo,samples.foo.FooActivity);
-    </pre>
-    <h3>2. アクション名</h3> 呼び出し後に実行させたい動作。
-    <pre>
-      Intent.ACTION_VIEW 表示する
-      Intent.ACTION_MAIN タスクのルートアクティビティとして起動
-      Intent.ACTION_CALL 電話をかける
-      Intent.ACTION_EDIT データの編集
-
-      例)
-      intent.setAction(Intent.ACTION_VIEW);
-    </pre>
-    <h3>3. カテゴリアクションについての追加情報。</h3>
-    <pre>
-      Intent.CATEGORY_LAUNCHER ホームのアイコンから起動可能であることを示す。
-      Inent.CATEGORY_BROWSABLE ブラウザから起動することが可能であることを示す。
-
-      例)
-      intent.addCategory(Intent.CATEGORY_DEFAULT);
-    </pre>
-    <h3>4. データ</h4>
-      アクションの対象となるデータの　URI。
-      ※データはURIのパスに絞り込み条件と、送る情報を含めることができるので、絞り込み条件であり対象に送るデータでもある。
-      <pre>
-      例)
-      inent.setData(Uri.parse( http://www.google.com/xxx/yyy?a=10
-    </pre>
-  <h3>5. フラグ (インテントフラグとも言う)</h3>
-    <h4>明示的インテントと暗黙的インテントとは？</h4>
-    <ul>
-        <li>呼び出し対象を一意に指定するインテントを「明示的インテント」という。絞り込み条件でいうと「コンポーネント名」を指定したインテント。</li>
-        <li>一方、必ずしも一意にならないインテントを「暗黙的インテント」という。絞り込み条件でいうと「アクション名」「カテゴリ」「データ」を指定したインテント。</li>
-    </ul>
-    <h2>3.インテントの発行の例</h2>
-    <pre>例1) Foo アクティビティの起動
-    Intent　intent = new Intendt (context,FooActivity.class); startActivity(intent);
-    </pre>
-    <pre>例2) Foo サービスの起動
-    Intent　intent = new Intent (context,　FooService.class); startService(intent);
-    </pre>
-    <pre>例3) MyAction  のブロードキャスト発行
-    Intent　intent　=　new　Intent( MyAction );
-    sendBroadcast(intent);
-    </pre>
-    <pre>例4) ブラウザ起動</pre>
-    <ul>
-        <li>
-            <p>暗黙的インテント</p>
-            <pre>
-Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(http://www.google.com));
+    <div class="container">
+        <h3 id="-">インテントとは</h3>
+        <ul>
+            <li>インテントから呼び出される対象となるのは「<strong>アプリケーションコンポーネント</strong>」で、そのうちの「アクティビティ」「サービス」「ブロードキャストレシーバ」の３つは対象で、コンテンツプロバイダは含まれない。</li>
+            <li>インテントにマッチする機能(アプリケーションコンポーネント)が複数あった場合、どちらを呼び出すかを選択するダイアログ「<strong>App Chooser(アプリチューザ)</strong>」が表示されユーザーが選択することができる。
+            <li>インテントには大きく 2 つの情報を設定することができる。
+                <ol>
+                    <li><strong>呼び出し対象を絞り込む条件 (必須)</strong></li>
+                    <li><strong>呼び出し対象に送るデータ</strong></li>
+                </ol>
+            </li>
+        </ul>
+        <h3 id="-">呼び出し対象を絞り込む条件</h3>
+        <h4 id="-1-">(1) コンポーネント名</h4>
+        <ul>
+            <li>呼び出し対象となるコンポーネントのクラス名。</li>
+            <li>完全修飾クラス名やクラスリテラルなどで指定する。</li>
+        </ul>
+        <p>例1)</p>
+        <pre><code class="lang-java">Intent intent = new Intent(context, FooActivity.class);    // コンポーネント名を設定したインテントを作成するコンストラクタ
+</code></pre>
+        <p>例2)</p>
+        <pre><code class="lang-java">intent.setComponent(new ComponentName(org.samples, org.samples.activity.FooActivity);
+※ 第1引数はアプリのパッケージ名、第2引数はアクティビティの完全修飾クラス名
+</code></pre>
+        <p>例3)</p>
+        <pre><code class="lang-java">intent.setClass(context, FooActivity.class);
+※ 第1引数はコンテキスト、第2引数はアクティビティのクラスリテラル
+</code></pre>
+        <h4 id="-2-">(2) アクション名</h4>
+        <ul>
+            <li>何をしたいかの操作の種類を表す文字列。</li>
+            <li>あらかじめ定義されたものがいくつかあり、例えば下記。<pre><code class="lang-java">Intent.ACTION_VIEW        表示する
+Intent.ACTION_CALL        電話をかける
+Intent.ACTION_EDIT        編集する
+</code></pre>
+            </li>
+        </ul>
+        <p>例)</p>
+        <pre><code class="lang-java">intent.setAction(Intent.ACTION_VIEW);
+</code></pre>
+        <h4 id="-3-">(3) カテゴリ</h4>
+        <ul>
+            <li>インテントを処理できるコンポーネントの分類を表す文字列。</li>
+            <li>あらかじめ定義されたものがいくつかあり、例えば下記<pre><code class="lang-java">Intent.CATEGORY_LAUNCHER    ホームのアイコンから起動可能なもの
+Inent.CATEGORY_BROWSABLE    ブラウザから起動することが可能なもの
+</code></pre> 例)
+                <pre><code class="lang-java">intent.addCategory(Intent.CATEGORY_DEFAULT);
+</code></pre>
+            </li>
+        </ul>
+        <h4 id="-4-">(4) データ</h4>
+        <ul>
+            <li>呼び出し対象を示す URI であり、呼び出し対象に送る URI 形式のデータ。
+                <em>&lt;!&gt; データは絞り込み条件でもあるし、対象に送るデータでもある。</em></li>
+        </ul>
+        <p>例)</p>
+        <pre><code class="lang-java">inent.setData(Uri.parse(http://www.google.com/xxx/yyy?a=10));
+</code></pre>
+        <h3 id="-">呼び出し対象に送るデータ</h3>
+        <h4 id="-5-">(5) エクストラ</h4>
+        <ul>
+            <li>呼び出し対象に渡せる <code>Bundle</code> 形式のデータ。</li>
+            <li><code>Bundle</code> クラスは Java の <code>Map</code> のようにキーと値からなるクラス。</li>
+        </ul>
+        <p>例)</p>
+        <pre><code class="lang-java">intent.putExtra(name, nameStr);
+intent.putExtra(num, i);
+</code></pre>
+        <h4 id="-6-">(6) フラグ (インテントフラグとも言う)</h4>
+        <ul>
+            <li>呼び出し対象の起動方法などを指定する。</li>
+        </ul>
+        <p>例)</p>
+        <pre><code class="lang-java">intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|FLAG_ACTIVITY_CLEAR_TOP);
+</code></pre>
+        <h3 id="-">明示的インテントと暗黙的インテント</h3>
+        <ul>
+            <li>
+                <p><strong>明示的インテント</strong></p>
+                <ul>
+                    <li>呼び出し対象を一意に指定するインテントのこと。</li>
+                    <li>絞り込み条件でいうと「コンポーネント名」を指定したインテント。</li>
+                </ul>
+            </li>
+            <li>
+                <p><strong>暗黙的インテント</strong></p>
+                <ul>
+                    <li>呼び出し対象が必ずしも一意にならないインテントのこと。</li>
+                    <li>絞り込み条件でいうと「アクション名」「カテゴリ」「データ」を指定したインテント。</li>
+                </ul>
+            </li>
+        </ul>
+        <h3 id="-">インテント発行の例</h3>
+        <p>例1) Foo アクティビティの起動</p>
+        <pre><code class="lang-java">Intent intent = new Intent(context, FooActivity.class);
 startActivity(intent);
-</pre>
-        </li>
-        <li>
-            <p>Android 標準ブラウザを指定する明示的インテント</p>
-            <pre>
-Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(http://www.google.com));
-intent.setClassName( com.android.browser , com.android.browser.BrowserActivity ); startActivity(intent);
-            </pre>
-        </li>
-    </ul>
-    <pre>例5) ダイアラー起動</pre>
-    <pre>
-    Intent　intent　=　new　Intent(Intent.ACTION_DIAL,Uri.parse( tel:090xxxxxxxx ));
-    startActivity(intent);
-  </pre>
-
+</code></pre>
+        <p>例2) Foo サービスの起動</p>
+        <pre><code class="lang-java">Intent intent = new Intent(context, FooService.class);
+startService(intent);
+</code></pre>
+        <p>例3) MyAction のブロードキャスト発行</p>
+        <pre><code class="lang-java">Intent intent = new Intent(MyAction);
+sendBroadcast(intent);
+</code></pre>
+        <p>例4) ブラウザ起動（暗黙的インテント）</p>
+        <pre><code class="lang-java">Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(http://www.google.com));
+startActivity(intent);
+</code></pre>
+        <p>例5) ブラウザ起動（明示的インテント）</p>
+        <pre><code class="lang-java">Intent intent = new Intent(Intent.ACTION_VIEW);
+intent.setData(Uri.parse(http://www.google.com));
+intent.setClassName(com.android.browser, com.android.browser.BrowserActivity);
+startActivity(intent);
+</code></pre>
+        <p>例6) ダイアラー起動</p>
+        <pre><code class="lang-java">Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(tel:090xxxxxxxx));
+startActivity(intent);
+</code></pre>
+    </div>
 </body>
 
 </html>
