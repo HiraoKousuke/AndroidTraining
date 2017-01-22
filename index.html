@@ -2,46 +2,83 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="css/stylesheet.css" type="text/css" />
     <meta charset="utf-8">
     <title>Androidトレーニング</title>
-    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="../../js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 </head>
 
 <body>
     <div id="wrapper">
-      <div id="header">
-      <h1>Androidトレーニング</h1>
-      </div>
-        <div id="main">
-            <div id="menu">
-                <ol>
-                    <li><a href="foundation/androidos.html">1.Android OSについて</a></li>
-                    <li><a href="foundation/android-studio.html">2.Android Studio</a></li>
-                    <li><a href="foundation/applicationcomponent/index.html">3.アプリケーションコンポーネント</a></li>
-                    <li><a href="foundation/ui/index.html">4.UI</a></li>
-                    <li><a href="foundation/fragment/index.html">5.フラグメント</a></li>
-                    <li><a href="foundation/androidmanifest/index.html">6.AndroidManifest</a></li>
-                    <li><a href="foundation/resource/index.html">7.リソース</a></li>
-                    <li><a href="foundation/thread/index.html">8.非同期処理</a></li>
-                    <li><a href="foundation/network/index.html">9.通信</a></li>
-                    <li><a href="foundation/storage/index.html">10.ストレージ</a></li>
-                    <li><a href="foundation/device/index.html">11.デバイス</a></li>
-                    <li><a href="foundation/openapplication/index.html">12.アプリケーションの公開</a></li>
-                    <li><a href="foundation/other/index.html">13.その他</a></li>
-                </ol>
-            </div>
-            <div id="contents">
-                <h2>1. 環境構築</h2>
-                <p>・以下のリンクからAndroid Studioをインストールしてください。</p>
-                <p><a href="https://developer.android.com/studio/index.html?hl=ja">Android Studio 2.21.0</a></p>
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Dashboard</a>
+                </li>
+                <li>
+                    <a href="#">Shortcuts</a>
+                </li>
+                <li>
+                    <a href="#">Overview</a>
+                </li>
+                <li>
+                    <a href="#">Events</a>
+                </li>
+                <li>
+                    <a href="#">About</a>
+                </li>
+                <li>
+                    <a href="#">Services</a>
+                </li>
+                <li>
+                    <a href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1>Simple Sidebar</h1>
+                        <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will appear/disappear. On small
+                            screens, the page content will be pushed off canvas.</p>
+                        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
+                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div id="footer">
-        </div>
+        <!-- /#page-content-wrapper -->
+
     </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+
 </body>
 
 </html>
