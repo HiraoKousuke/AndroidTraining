@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <h3 id="-">ブロードキャストとは</h3>
+    <ul>
+        <li>ブロードキャストとは、<strong>送り先を指定せず不特定多数の相手に投げるメッセージ</strong>。</li>
+        <li>ブロードキャストは <strong>インテントとして</strong> 投げられる。
+            <ul>
+                <li>インテントの絞り込み条件がブロードキャストを区別するものになる。</li>
+                <li>エクストラで情報をつけることもできる。</li>
+            </ul>
+        </li>
+        <li>Android システムはシステム内の状況の変化に合わせてブロードキャストを投げている。例えば次のようなものがある。<pre><code class="lang-text">・バッテリー状態の変更
+・システムの起動/終了
+・アプリのインストール/アンインストール
+・時刻の変更
+など
+</code></pre>
+            <blockquote>
+                <p><small>
+※ Intent の定数の部分で「Broadcast Action:」とあるものがシステムが投げるブロードキャストの一覧。<br>
+<a href="https://developer.android.com/reference/android/content/Intent.html?hl=ja#constants">https://developer.android.com/reference/android/content/Intent.html?hl=ja#constants</a>
+</small></p>
+            </blockquote>
+        </li>
+    </ul>
+    <h3 id="-">ブロードキャストの送信</h3>
+    <ol>
+        <li>インテントを作成し、下記を設定
+            <ul>
+                <li>送り先を特定する情報(アクション、カテゴリ、データ)</li>
+                <li>送り先に渡す情報（エクストラ）</li>
+            </ul>
+        </li>
+        <li><code>Context#sendBroadcast(Intent)</code> でブロードキャストを送信。<br></li>
+    </ol>
+    <p>例) アクションが hoge というブロードキャストを投げる</p>
+    <pre><code class="lang-java">sendBroadcast(new Intent(&quot;hoge&quot;));
+</code></pre>
+    <h3 id="-">ブロードキャストレシーバの作り方</h3>
+    <ul>
+        <li>
+            <p><code>BroadcastReceiver</code> を継承し、<code>onReceive()</code> メソッドをオーバーライド</p>
+            <pre><code class="lang-java">public void onReceive(Context context, Intent intent)
+  -- ブロードキャストを受け取った際に呼ばれるイベントハンドラ。
+
+  intent    :ブロードキャストのインテント
+</code></pre>
+        </li>
+    </ul>
+    <p>例)</p>
+    <pre><code class="lang-java">public static class MyReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        ...
+    }
+}
+</code></pre>
+
+</body>
+
+</html>

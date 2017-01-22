@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link href="../../../css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="../../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+	<div class="container">
+		<h3 id="-">アクティビティとは</h3>
+		<ul>
+			<li>UI を持ち1つの画面を表すコンポーネント。</li>
+			<li>フォアグラウンドで実行状態、バックグラウンドで停止状態のように、見える(触れる)などの状態によるライフサイクルを持つ。</li>
+		</ul>
+		<h3 id="-">アクティビティの構成要素</h3>
+		<ul>
+			<li>アクティビティ自体は「Java のクラス」で、そこに UI部品（これも Java クラス）を追加することで画面が作られる。</li>
+			<li>アクティビティを構成する UI 部品としては大きく 2 種類がある。
+				<ol>
+					<li><strong>ビュー</strong><br> テキスト、ボタン、画像などの UI として形状を持つ部品</li>
+					<li><strong>レイアウト</strong><br> UI としての形状を持たずビューをグループ化し表示位置を制御する部品 ※ 正確にはレイアウトもビュー。UI形状を持つものと区別したいために呼び方をビューとレイアウトとしている。</li>
+				</ol>
+			</li>
+		</ul>
+		<blockquote>
+			<p>イメージとして Activity 内にビュー、レイアウトのインスタンスが階層構造で追加されている感じ。XML の DOM と同じと考えても良い。</p>
+			<pre>
+		    Activity
+		        Layout
+		            View1
+		            View2
+		        Layout
+		            View3
+		</pre>
+
+
+		</blockquote>
+		<h3 id="-ui-">アクティビティへのUIの追加</h3>
+		<ul>
+			<li>アクティビティに UI を追加する方法は 2 つある。
+				<ol>
+					<li>UI 部品の配置を定義したXMLファイルからビューのインスタンスを生成しアクティビティに追加。このXMLファイルを <strong>『レイアウトファイル』</strong> という。</li>
+					<li>UI 部品の Java クラスを new によりインスタンスを生成し 1 つずつアクティビティに追加。</li>
+				</ol>
+			</li>
+		</ul>
+		<p>※ 両方とも例は後述</p>
+	</div>
+</body>
+
+</html>

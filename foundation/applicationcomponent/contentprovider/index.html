@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../../../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <h3 id="-">コンテンツプロバイダとは</h3>
+    <ul>
+        <li>他アプリに対してアプリ内の <strong>データを公開するコンポーネント</strong>。</li>
+        <li>公開できる主なデータとしては「DBテーブルデータ」「ファイルデータ」。</li>
+        <li>提供される側はデータに対して次のようなアクセスができる。
+            <ul>
+                <li><strong>DBテーブルデータ</strong><br> → データに対して <code>SQLiteDatabase</code> の CRUD メソッドのようなアクセスが可能。</li>
+                <li><strong>ファイルデータ</strong><br> → データを content://xxxxx/xxxx のような URI 形式で参照できたり、そのファイルへの入力ストリームでアクセスが可能。</li>
+            </ul>
+        </li>
+        <li>コンテンツプロバイダのデータは URI を用いて識別され、この URI を「<strong>コンテンツURI</strong>」という。<br> 例) コンテンツURIの例<pre><code class="lang-text">content://org.sample.myprovider/test/3
+</code></pre>
+        </li>
+    </ul>
+    <h3 id="-">コンテンツプロバイダ周りの登場人物</h3>
+    <ol>
+        <li><strong><font color="teal">コンテンツプロバイダ</font></strong>
+            <ul>
+                <li>コンテンツプロバイダそのもの。データを提供する。</li>
+            </ul>
+        </li>
+        <li><strong><font color="teal">コンテンツURI</font></strong>
+            <ul>
+                <li>コンテンツプロバイダが提供するデータを指し示す URI。</li>
+            </ul>
+        </li>
+        <li><strong><font color="teal">コンテンツリゾルバ</font></strong>
+            <ul>
+                <li>コンテンツURIから Android システム内の対象となるコンテンツプロバイダを探し、そのプロバイダが提供するデータのアクセスを行う。</li>
+            </ul>
+        </li>
+        <li><strong><font color="teal">UriMatcher</font></strong>
+            <ul>
+                <li>コンテンツURIのパターン一致を簡単に行えるユーティリティクラス。</li>
+            </ul>
+        </li>
+    </ol>
+    <h3 id="-uri-">コンテンツURIとは</h3>
+    <ul>
+        <li>どのコンテンツプロバイダのどのデータなのかを指し示す URI。</li>
+        <li>次のような形になっている。<br>
+            <strong>content://{authority}/{path}</strong><pre><code class="lang-text">【authority】
+・プロバイダを識別するための名前。
+・プロバイダクラスの「完全修飾クラス名を小文字」にしたものを付けるのが推奨されている。
+  例) コンテンツプロバイダが「org.sample.MyProvider」 だった場合
+      org.sample.myprovider
+　
+【path】
+・プロバイダが提供するデータの中のどのデータなのかを識別する名前。
+・aaa/bbb/ccc のように階層形式で付けられ、各部分を「セグメント」という。
+  例1) hoge テーブルの全レコード
+          content://org.sample.myprovider/hoge
+  例2) hoge テーブルの ID=10 のレコード
+      content://org.sample.myprovider/hoge/10
+</code></pre>
+        </li>
+        <li>Android システムにはには最初からいくつかプロバイダが入っていて、そのプロバイダのコンテンツURIは下記のようになっている。</li>
+    </ul>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align:left">データ</th>
+                <th style="text-align:left">コンテンツURI</th>
+                <th style="text-align:left">定数</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">電話帳の電話番号</td>
+                <td style="text-align:left">content://com.android.contacts/data/phones</td>
+                <td style="text-align:left">ContactsContract.CommonDataKinds.Phone.CONTENT_URI</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">電話帳の住所</td>
+                <td style="text-align:left">content://com.android.contacts/data/postals</td>
+                <td style="text-align:left">ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">ブックマーク</td>
+                <td style="text-align:left">content://browser/bookmarks</td>
+                <td style="text-align:left">Browser.BOOKMARKS_URI</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">発着信履歴</td>
+                <td style="text-align:left">content://call_log/calls</td>
+                <td style="text-align:left">CallLog.Calls.CONTENT_URI</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3 id="-">コンテンツリゾルバとは</h3>
+    <ul>
+        <li>コンテンツプロバイダのデータのアクセスは、コンテンツプロバイダに対し直接アクセスはせず、仲介役を使って行う。その仲介役が「<strong>ContentResolver クラス</strong>」</li>
+        <li><code>ContentResolver</code> のインスタンスは <code>Context#getContentResolver()</code> で取得できる。<pre><code class="lang-java">ContentResolver resolver = getContentResolver();
+</code></pre>
+        </li>
+        <li><code>ContentResolver</code> には <code>SQLiteDatabase</code> のように <code>query()</code>/<code>insert()</code>/<code>update()</code>/<code>delete()</code> の CRUD 形式のメソッドが用意されていて、それを呼び出すことでコンテンツプロバイダが提供する DB テーブルデータにアクセスできる。<pre><code class="lang-java">Cursor cursor = resolver.query(...);
+int deleteCount = resolver.delete(...);
+</code></pre> ファイルデータの場合は、openInputStream() を使ってそのファイルへのストリームが取得できる。<pre><code class="lang-java">InputStream in = resolver.openInputStream(...);
+</code></pre>
+        </li>
+    </ul>
+    <blockquote>
+        仲介役としては他にも <strong>ContentProviderClient</strong> がある。ContentProviderClient の方が ContentResolver より高速にやり取りが行える。 原理は、ContentResolver は中でプロバイダへのアクセスを ContentProviderClient を使っている。結局どっちも同じように見えるが、ContentProviderClient が ContentProvider とやり取りする際に最初にプロバイダを探す作業あり、そこに時間がかかり、ContentResolver
+        はプロバイダにリクエストするたびに毎回 ContentProviderClient を使って捨ててをしているので毎回探す分遅くなる。
+        <br>
+        <br> app　→　ContentResolver　→　ContentProviderClient　--(毎回接続)→　ContentProvider
+        <br> app　→　ContentProviderClient　--(ずっと接続)→　ContentProvider
+        <br>
+    </blockquote>
+    <h3 id="urimatcher-">UriMatcher とは</h3>
+    <ul>
+        <li><code>UriMatcher</code> に コンテントURI をいくつも登録でき、対象となるコンテントURIが登録されているどのコンテントURIに一致するかを調べてくれるクラス。</li>
+    </ul>
+    <p>例)</p>
+    <pre><code class="lang-java">private static final UriMatcher uriMatcher;
+static {
+    // コンストラクタで登録URIに全て一致しなかった場合に返すコードを渡す
+    uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    // Matcher にコンテントURIとそれに一致した時に返すコードを登録
+    uriMatcher.addURI(org.sample.myprovider, employee, 1);
+    uriMatcher.addURI(org.sample.myprovider, employee/# 2);
+    uriMatcher.addURI(org.sample.myprovider, address, 3);
+    ...
+}
+...
+int code1 = uriMatcher.match(content://org.sample.myprovider/employee);    //= 1
+int code2 = uriMatcher.match(content://org.sample.myprovider/employee/10);//= 2
+int code3 = uriMatcher.match(content://org.sample.myprovider/address);    //= 3
+int code4 = uriMatcher.match(content://org.sample.myprovider/hoge);    //= -1(UriMatcher.NO_MATCHの値)
+</code></pre>
+    <h3 id="urimatcher-">UriMatcher クラスの重要なメソッド</h3>
+    <p><strong>UriMatcher クラス</strong></p>
+    <pre><code class="lang-java">public UriMatcher(int code)
+    -- コンストラクタ
+
+    code    :match() 実行時にひとつも一致しなかった時に返すコード
+</code></pre>
+    <pre><code class="lang-java">void addURI(String authority, String path, int code)
+    -- UriMatcher にコンテントURIを登録する。
+
+    authority   :プロバイダ名(コンテントURIのauthority部分)
+    path        :パス名(コンテントURIのpath部分)
+    code        :コンテントURIを識別するコード
+</code></pre>
+    <pre><code class="lang-java">int match(Uri uri)
+    -- uri が UriMatcher に登録されている URI と一致するか調べます。
+
+    uri         :チェック対象のコンテントURI
+    戻り値       :登録されているURIに一致する場合はそのコード、
+                一致しなかった場合は不一致の際のコード。
+</code></pre>
+
+</body>
+
+</html>
